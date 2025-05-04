@@ -1,38 +1,124 @@
+/* Fonts */
+@font-face {
+  font-family: NOT;
+  src: url(../public/Font/Alexandria-Bold.ttf);
+  font-weight: bold;
+}
+@font-face {
+  font-family: NOt;
+  src: url(../public/Font/Alexandria-Medium.ttf);
+  font-weight: 400;
+}
+@font-face {
+  font-family: NOT;
+  src: url(../public/Font/Alexandria-Regular.ttf);
+  font-weight: reg;
+}
+@font-face {
+  font-family: NOT;
+  src: url(../public/Font/Alexandria-Light.ttf);
+  font-weight: 300;
+}
+/* FOnts */
+* {
+  transition: 0.3s;
+}
+body {
+  font-family: NOT;
+  background-color: rgba(0, 0, 0, 0.759);
+  padding: 2% 0;
+}
 .App {
+  background-color: white;
+  border: 1px solid white;
+  border-radius: 10px;
+  direction: rtl;
+  box-shadow: 0 7px 7px rgb(0, 0, 0.4);
+  padding-bottom: 10px;
+}
+.Title {
+  font-size: 35px;
   text-align: center;
+  margin-bottom: 10px;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.buttons {
+  padding-bottom: 10px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  align-items: center;
+}
+.buttons:hover {
+  padding: 20px;
+}
+.buttons Button {
+  font-size: 18px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.499);
+}
+.buttons .active {
+  color: white;
+  background-color: rgba(151, 20, 151, 0.103);
+  padding-left: 20px;
+  padding-right: 20px;
+  color: purple;
+  margin: 0 5px;
+}
+.toDo {
+  background-color: rgb(110, 3, 110);
+  width: 93%;
+  border-radius: 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  padding: 0px 10px;
+  margin-bottom: 10px;
+}
+.toDo:hover {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-shadow: 0 7px 7px rgb(0, 0, 0.4);
+}
+.comp {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.icon {
+  display: flex;
+  gap: 8px;
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
+.icon1,
+.icon2,
+.icon3 {
+  background-color: white;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.icon1,
+.icon2,
+.icon3:hover {
+  cursor: pointer;
+}
+.icon1:hover {
+  background-color: rgba(18, 236, 18, 0.322);
+  padding: 5px;
+  box-shadow: 0 7px 7px rgb(0, 0, 0.4);
+}
+.icon2:hover {
+  background-color: rgba(255, 0, 0, 0.271);
+  padding: 5px;
+  box-shadow: 0 7px 7px rgb(0, 0, 0.4);
+}
+.icon3:hover {
+  background-color: rgba(0, 0, 255, 0.168);
+  padding: 5px;
+  box-shadow: 0 7px 7px rgb(0, 0, 0.4);
 }
