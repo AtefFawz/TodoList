@@ -45,41 +45,28 @@ import { useState } from "react";
 const arrays = [
   {
     id: uuid(),
-    heading: "Atef",
-    description: " i am a read a three books ",
-    complete: false,
-  },
-  {
-    id: uuid(),
-    heading: "Fawzy",
-    description: " i am a read a three books ",
-    complete: false,
-  },
-  {
-    id: uuid(),
-    heading: "Khalaf",
-    description: " i am a read a three books ",
+    heading: "Kalb Elbahr",
+    description: " she is a stubid ",
     complete: false,
   },
 ];
 // Parent Function
 function App() {
-
   // Hook State
   const [data, setData] = useState(arrays);
 
   return (
     <Container maxWidth="sm">
       {/* <ThemeProvider theme={theme}> */}
-        {/* COntText */}
-        <ContextTodo.Provider value={{ data, setData }}>
-          <div className="App" >
-            <Title />
-            <Side />
-            <ToDoList  />
-          </div>
-        </ContextTodo.Provider>
-        {/*End COntText */}
+      {/* COntText */}
+      <ContextTodo.Provider value={{ data, setData }}>
+        <div className="App">
+          <Title />
+          <Side />
+          <ToDoList />
+        </div>
+      </ContextTodo.Provider>
+      {/*End COntText */}
       {/* </ThemeProvider> */}
     </Container>
   );
