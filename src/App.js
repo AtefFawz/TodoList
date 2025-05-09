@@ -9,8 +9,8 @@ import Side from "./Main/Side";
 import ToDoList from "./Main/ToDoList";
 
 // Import Themes
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { orange, purple } from "@mui/material/colors";
+// import { createTheme, ThemeProvider } from "@mui/material/styles";
+// import { orange, purple } from "@mui/material/colors";
 
 // Import UUID
 import { v4 as uuid } from "uuid";
@@ -22,24 +22,24 @@ import { ContextTodo } from "./Main/Contexts/Context";
 import { useState } from "react";
 
 // Variable Themes
-const theme = createTheme({
-  status: {
-    danger: orange[500],
-  },
-  palette: {
-    primary: {
-      main: purple[100],
-    },
-    second: {
-      sec: purple[500],
-    },
-  },
-  typography: [
-    {
-      fontFamily: "NOT",
-    },
-  ],
-});
+// const theme = createTheme({
+//   status: {
+//     danger: orange[500],
+//   },
+//   palette: {
+//     primary: {
+//       main: purple[100],
+//     },
+//     second: {
+//       sec: purple[500],
+//     },
+//   },
+//   typography: [
+//     {
+//       fontFamily: "NOT",
+//     },
+//   ],
+// });
 
 // Array Variable Context
 const arrays = [
@@ -70,17 +70,17 @@ function App() {
 
   return (
     <Container maxWidth="sm">
-      <ThemeProvider theme={theme}>
+      {/* <ThemeProvider theme={theme}> */}
         {/* COntText */}
         <ContextTodo.Provider value={{ data, setData }}>
-          <div className="App">
+          <div className="App" >
             <Title />
             <Side />
-            <ToDoList />
+            <ToDoList  />
           </div>
         </ContextTodo.Provider>
         {/*End COntText */}
-      </ThemeProvider>
+      {/* </ThemeProvider> */}
     </Container>
   );
 }
