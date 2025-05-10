@@ -9,13 +9,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
+// Update
+import TextField from "@mui/material/TextField";
 // Import COntext
 import { useContext } from "react";
 import { ContextTodo } from "./Contexts/Context";
-// Styled
 
 // Parent Function
-
 export default function ToDo({ todo, heading }) {
   // Hook Modal
   const [open, setOpen] = useState(false);
@@ -48,13 +48,45 @@ export default function ToDo({ todo, heading }) {
     setData(Update);
   }
   // Function delete
-  function handelDelete(){
-    const UpdateDelete = data.filter((e)=>{
+  function handelDelete() {
+    const UpdateDelete = data.filter((e) => {
       return e.id != todo.id;
-    })
-    setData(UpdateDelete)
+    });
+    setData(UpdateDelete);
   }
   // ======= End Function handel Click
+
+  // Update Function
+  const [openUpdate, setOpenUpdate] = useState(false);
+
+  const handleClickOpenUpdate = () => {
+    setOpenUpdate(true);
+  };
+
+  const handleCloseUpdate = () => {
+    setOpenUpdate(false);
+  };
+  // =========
+  const [update, setUpdate] = useState({
+    heading: todo.heading,
+    description: todo.description,
+  });
+  function handelclickupdate() {
+    const Update = data.map((e) => {
+      if (e.id === todo.id) {
+        return {
+          ...e,
+          heading: update.heading,
+          description: update.description,
+        };
+      } else {
+        return e;
+      }
+    });
+    setData(Update);
+  }
+  //End Update Function
+  console.log(update.details);
   return (
     <>
       <div
@@ -81,9 +113,7 @@ export default function ToDo({ todo, heading }) {
                 handelClick();
               }}
               style={{
-                backgroundColor: todo.complete
-                  ? "green"
-                  : "white",
+                backgroundColor: todo.complete ? "green" : "white",
               }}
             >
               <DoneOutlineOutlinedIcon
@@ -98,14 +128,12 @@ export default function ToDo({ todo, heading }) {
                 style={{ direction: "rtl" }}
                 open={open}
                 onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
               >
-                <DialogTitle id="alert-dialog-title">
+                <DialogTitle>
                   {"هل انت متأكد من رغبتك في حذف المهمه ؟"}
                 </DialogTitle>
                 <DialogContent>
-                  <DialogContentText id="alert-dialog-description">
+                  <DialogContentText>
                     لا يمكن التراجع عن الحذف في حالة اختيار زر:(الحذف)
                   </DialogContentText>
                 </DialogContent>
@@ -129,8 +157,59 @@ export default function ToDo({ todo, heading }) {
               />
             </div>
             {/* =======End Button Delete */}
+            {/* Modal Edit Input */}
+            <div>
+              <Dialog
+                style={{ direction: "rtl" }}
+                open={openUpdate}
+                onClose={handleCloseUpdate}
+              >
+                <DialogTitle>{"تعديل المهمة"}</DialogTitle>
+                <DialogContent>
+                  <TextField
+                    autoFocus
+                    label="عنوان المهمه"
+                    fullWidth
+                    variant="standard"
+                    value={update.heading}
+                    onChange={(e) => {
+                      setUpdate({ ...update, heading: e.target.value });
+                    }}
+                  />
+                </DialogContent>
+                {/* ======== Input Tow  */}
+                <DialogContent>
+                  <TextField
+                    autoFocus
+                    id="name"
+                    label="وصف المهمه"
+                    fullWidth
+                    variant="standard"
+                    value={update.description}
+                    onChange={(e) => {
+                      setUpdate({ ...update, description: e.target.value });
+                    }}
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={handleCloseUpdate}>تراجع</Button>
+
+                  <Button
+                    autoFocus
+                    style={{ color: "#8E1616" }}
+                    onClick={handelclickupdate}
+                  >
+                    تاكيد
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            </div>
+            {/*End  Modal Edit Input */}
             <div className="icon3">
-              <BorderColorOutlinedIcon style={{ color: "blue" }} />
+              <BorderColorOutlinedIcon
+                style={{ color: "blue" }}
+                onClick={handleClickOpenUpdate}
+              />
             </div>
           </div>
         </div>

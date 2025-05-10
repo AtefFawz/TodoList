@@ -109,7 +109,6 @@ body {
   cursor: pointer;
 }
 .icon1:hover {
-  background-color: rgba(18, 236, 18, 0.322);
   padding: 5px;
   box-shadow: 0 7px 7px rgb(0, 0, 0.4);
 }

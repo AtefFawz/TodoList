@@ -21,32 +21,14 @@ import { ContextTodo } from "./Main/Contexts/Context";
 // Import Use State
 import { useState } from "react";
 
-// Variable Themes
-// const theme = createTheme({
-//   status: {
-//     danger: orange[500],
-//   },
-//   palette: {
-//     primary: {
-//       main: purple[100],
-//     },
-//     second: {
-//       sec: purple[500],
-//     },
-//   },
-//   typography: [
-//     {
-//       fontFamily: "NOT",
-//     },
-//   ],
-// });
+
 
 // Array Variable Context
 const arrays = [
   {
     id: uuid(),
-    heading: "Kalb Elbahr",
-    description: " she is a stubid ",
+    heading: "وجه البرص😁",
+    description: "",
     complete: false,
   },
 ];
@@ -57,7 +39,6 @@ function App() {
 
   return (
     <Container maxWidth="sm">
-      {/* <ThemeProvider theme={theme}> */}
       {/* COntText */}
       <ContextTodo.Provider value={{ data, setData }}>
         <div className="App">
@@ -67,7 +48,6 @@ function App() {
         </div>
       </ContextTodo.Provider>
       {/*End COntText */}
-      {/* </ThemeProvider> */}
     </Container>
   );
 }
