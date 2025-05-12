@@ -8,10 +8,6 @@ import Title from "./Main/Title";
 import Side from "./Main/Side";
 import ToDoList from "./Main/ToDoList";
 
-// Import Themes
-// import { createTheme, ThemeProvider } from "@mui/material/styles";
-// import { orange, purple } from "@mui/material/colors";
-
 // Import UUID
 import { v4 as uuid } from "uuid";
 
@@ -21,13 +17,11 @@ import { ContextTodo } from "./Main/Contexts/Context";
 // Import Use State
 import { useState } from "react";
 
-
-
 // Array Variable Context
 const arrays = [
   {
     id: uuid(),
-    heading: "وجه البرص😁",
+    heading: "مهامي",
     description: "",
     complete: false,
   },

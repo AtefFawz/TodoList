@@ -46,6 +46,7 @@ export default function ToDo({ todo, heading }) {
       return e;
     });
     setData(Update);
+    localStorage.setItem("data", JSON.stringify(Update));
   }
   // Function delete
   function handelDelete() {
@@ -53,6 +54,7 @@ export default function ToDo({ todo, heading }) {
       return e.id != todo.id;
     });
     setData(UpdateDelete);
+    localStorage.setItem("data", JSON.stringify(UpdateDelete));
   }
   // ======= End Function handel Click
 
@@ -84,9 +86,9 @@ export default function ToDo({ todo, heading }) {
       }
     });
     setData(Update);
+    localStorage.setItem("data", JSON.stringify(Update));
   }
   //End Update Function
-  console.log(update.details);
   return (
     <>
       <div
@@ -160,11 +162,13 @@ export default function ToDo({ todo, heading }) {
             {/* Modal Edit Input */}
             <div>
               <Dialog
-                style={{ direction: "rtl" }}
+                maxWidth="xs"
+                style={{ direction: "rtl", margin: "0px" }}
                 open={openUpdate}
                 onClose={handleCloseUpdate}
+                fullWidth
               >
-                <DialogTitle>{"تعديل المهمة"}</DialogTitle>
+                <DialogTitle>{"تعديل المهمة"} </DialogTitle>
                 <DialogContent>
                   <TextField
                     autoFocus

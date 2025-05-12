@@ -3,10 +3,9 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import ToDo from "./To-Do";
 import { v4 as uuid } from "uuid";
-import { useState } from "react";
 
 //  Import Context
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { ContextTodo } from "./Contexts/Context";
 //===============
 export default function ToDoList() {
@@ -20,7 +19,14 @@ export default function ToDoList() {
     return <ToDo key={uuid()} todo={e} heading={e.heading} />;
   });
   // =================
-
+  // UseEffect
+  useEffect(() => {
+    const item = JSON.parse(localStorage.getItem("data"));
+    if (item) {
+      setData(item);
+    }
+  }, []);
+  // =========
   function handelClick() {
     let newData = {
       id: uuid(),
@@ -28,9 +34,12 @@ export default function ToDoList() {
       description: "",
       Complete: false,
     };
-    setData([...data, newData]);
+    const Upgrade = [...data, newData];
+    setData(Upgrade);
+    localStorage.setItem("data", JSON.stringify(Upgrade));
     setInput("");
   }
+
   // =======
   return (
     <div>
