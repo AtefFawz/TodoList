@@ -3,6 +3,9 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import ToDo from "./To-Do";
 import { v4 as uuid } from "uuid";
+// Import Button Group
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 //  Import Context
 import { useContext, useState, useEffect } from "react";
@@ -13,9 +16,29 @@ export default function ToDoList() {
   const { data, setData } = useContext(ContextTodo);
   // Use State
   const [Inputs, setInput] = useState("");
-
+  // Button Action
+  const [values, setValues] = useState("all");
+  const handleChange = function (e) {
+    setValues(e.target.value);
+  };
+  // logical Button
+  const all = data.filter((e) => {
+    return e.complete;
+  });
+  const notDone = data.filter((e) => {
+    return !e.complete;
+  });
+  // ====== Conditional Rendering
+  let editing = data;
+  if (values == "done") {
+    editing = all;
+  } else if (values == "not-done") {
+    editing = notDone;
+  } else {
+    editing = data;
+  }
   // ======== Function
-  const Maps = data.map((e) => {
+  const Maps = editing.map((e) => {
     return <ToDo key={uuid()} todo={e} heading={e.heading} />;
   });
   // =================
@@ -43,12 +66,26 @@ export default function ToDoList() {
   // =======
   return (
     <div>
+      <div className="btn">
+        <ToggleButtonGroup
+          color="primary"
+          value={values}
+          exclusive
+          onChange={handleChange}
+          aria-label="Platform"
+          style={{ display: "flex", justifyContent: "center" }}
+        >
+          <ToggleButton value="all">الكل</ToggleButton>
+          <ToggleButton value="done">منجز</ToggleButton>
+          <ToggleButton value="not-done">غير منجز</ToggleButton>
+        </ToggleButtonGroup>
+      </div>
       {Maps}
       <Grid container spacing={1}>
         <Grid size={8}>
           <TextField
             color="sec"
-            style={{ width: "95%", paddingRight: "5.5%" }}
+            style={{ width: "100%", paddingRight: "3%" }}
             value={Inputs}
             onChange={(e) => {
               setInput(e.target.value);
@@ -58,7 +95,12 @@ export default function ToDoList() {
         <Grid size={4}>
           <Button
             variant="contained"
-            style={{ height: "100%", width: "90%", fontSize: "20px" }}
+            style={{
+              height: "100%",
+              width: "90%",
+              fontSize: "20px",
+              margin: "0 5px",
+            }}
             onClick={() => {
               handelClick();
             }}

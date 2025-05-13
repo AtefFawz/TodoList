@@ -5,7 +5,6 @@ import Container from "@mui/material/Container";
 
 // IMport Components
 import Title from "./Main/Title";
-import Side from "./Main/Side";
 import ToDoList from "./Main/ToDoList";
 
 // Import UUID
@@ -37,7 +36,6 @@ function App() {
       <ContextTodo.Provider value={{ data, setData }}>
         <div className="App">
           <Title />
-          <Side />
           <ToDoList />
         </div>
       </ContextTodo.Provider>
