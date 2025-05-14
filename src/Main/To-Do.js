@@ -101,9 +101,16 @@ export default function ToDo({ todo, heading }) {
       >
         <div className="toDo">
           <div className="content">
-            <h2 style={{ maxWidth: "100%", wordBreak: "break-word" }}>
+            <span
+              style={{
+                maxWidth: "100%",
+                wordBreak: "break-word",
+                fontSize: "25px",
+                fontWeight: "bold",
+              }}
+            >
               {heading}
-            </h2>
+            </span>
             <p style={{ maxWidth: "100%", wordBreak: "break-word" }}>
               {todo.description}
             </p>
