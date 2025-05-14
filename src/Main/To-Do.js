@@ -89,6 +89,7 @@ export default function ToDo({ todo, heading }) {
     localStorage.setItem("data", JSON.stringify(Update));
   }
   //End Update Function
+  console.log(todo.complete);
   return (
     <>
       <div
@@ -100,13 +101,15 @@ export default function ToDo({ todo, heading }) {
         }}
       >
         <div className="toDo">
-          <div className="content">
+          <div className="content" >
             <span
               style={{
                 maxWidth: "100%",
                 wordBreak: "break-word",
                 fontSize: "25px",
                 fontWeight: "bold",
+                textDecoration: todo.complete ? "line-through" : "none",
+                margin: "5px 0 0 0",
               }}
             >
               {heading}
