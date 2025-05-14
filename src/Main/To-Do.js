@@ -101,9 +101,9 @@ export default function ToDo({ todo, heading }) {
       >
         <div className="toDo">
           <div className="content">
-            <h4 style={{ maxWidth: "100%", wordBreak: "break-word" }}>
+            <h2 style={{ maxWidth: "100%", wordBreak: "break-word" }}>
               {heading}
-            </h4>
+            </h2>
             <p style={{ maxWidth: "100%", wordBreak: "break-word" }}>
               {todo.description}
             </p>
@@ -172,7 +172,7 @@ export default function ToDo({ todo, heading }) {
                 <DialogContent>
                   <TextField
                     autoFocus
-                    label="عنوان المهمه"
+                    label="عنوان المهمة"
                     fullWidth
                     variant="standard"
                     value={update.heading}

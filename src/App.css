@@ -45,6 +45,7 @@ body {
 }
 .btn {
   padding-bottom: 10px;
+  direction: ltr;
 }
 .btn:hover {
   padding: 20px;

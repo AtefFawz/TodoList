@@ -10,6 +10,7 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 //  Import Context
 import { useContext, useState, useEffect } from "react";
 import { ContextTodo } from "./Contexts/Context";
+import { ClassNames } from "@emotion/react";
 //===============
 export default function ToDoList() {
   // ========= Use Context
@@ -75,16 +76,15 @@ export default function ToDoList() {
           aria-label="Platform"
           style={{ display: "flex", justifyContent: "center" }}
         >
-          <ToggleButton value="all">الكل</ToggleButton>
-          <ToggleButton value="done">منجز</ToggleButton>
           <ToggleButton value="not-done">غير منجز</ToggleButton>
+          <ToggleButton value="done">منجز</ToggleButton>
+          <ToggleButton value="all">الكل</ToggleButton>
         </ToggleButtonGroup>
       </div>
       {Maps}
       <Grid container spacing={1}>
         <Grid size={8}>
           <TextField
-            color="sec"
             style={{ width: "100%", paddingRight: "3%" }}
             value={Inputs}
             onChange={(e) => {
