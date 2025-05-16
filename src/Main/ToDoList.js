@@ -82,10 +82,11 @@ export default function ToDoList() {
         </ToggleButtonGroup>
       </div>
       {Maps}
+      <div style={{margin:"10px 0 0 0"}}>
       <Grid container spacing={1}>
         <Grid size={8}>
           <TextField
-            style={{ width: "100%", paddingRight: "3%" }}
+            style={{ width: "100%",  }}
             value={Inputs}
             onChange={(e) => {
               setInput(e.target.value);
@@ -97,9 +98,8 @@ export default function ToDoList() {
             variant="contained"
             style={{
               height: "100%",
-              width: "90%",
+              width: "100%",
               fontSize: "20px",
-              margin: "0 5px",
             }}
             onClick={() => {
               handelClick();
@@ -110,6 +110,7 @@ export default function ToDoList() {
           </Button>
         </Grid>
       </Grid>
+      </div>
     </div>
   );
 }

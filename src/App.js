@@ -16,6 +16,17 @@ import { ContextTodo } from "./Main/Contexts/Context";
 // Import Use State
 import { useState } from "react";
 
+// Import Themes
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { orange, purple } from "@mui/material/colors";
+// Variable Themes
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: purple[500],
+    },
+  },
+});
 // Array Variable Context
 const arrays = [
   {
@@ -31,16 +42,18 @@ function App() {
   const [data, setData] = useState(arrays);
 
   return (
-    <Container maxWidth="sm">
-      {/* COntText */}
-      <ContextTodo.Provider value={{ data, setData }}>
-        <div className="App">
-          <Title />
-          <ToDoList />
-        </div>
-      </ContextTodo.Provider>
-      {/*End COntText */}
-    </Container>
+    <ThemeProvider theme={theme}>
+      <Container maxWidth="sm">
+        {/* COntText */}
+        <ContextTodo.Provider value={{ data, setData }}>
+          <div className="App">
+            <Title />
+            <ToDoList />
+          </div>
+        </ContextTodo.Provider>
+        {/*End COntText */}
+      </Container>
+    </ThemeProvider>
   );
 }
 

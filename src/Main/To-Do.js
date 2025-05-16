@@ -14,6 +14,10 @@ import TextField from "@mui/material/TextField";
 // Import COntext
 import { useContext } from "react";
 import { ContextTodo } from "./Contexts/Context";
+// Import Card ============
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
 
 // Parent Function
 export default function ToDo({ todo, heading }) {
@@ -89,36 +93,40 @@ export default function ToDo({ todo, heading }) {
     localStorage.setItem("data", JSON.stringify(Update));
   }
   //End Update Function
-  console.log(todo.complete);
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div className="toDo">
-          <div className="content" >
-            <span
+      {/* Start Card */}
+      <div>
+        <Card
+          className="toDo"
+          sx={{
+            backgroundColor: "rgb(111, 0, 111)",
+            minWidth: 275,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "0 10px",
+            color: "white",
+            margin: "10px 0 0 0",
+          }}
+        >
+          <CardContent>
+            <Typography
+              variant="h5"
               style={{
-                maxWidth: "100%",
-                wordBreak: "break-word",
-                fontSize: "25px",
-                fontWeight: "bold",
                 textDecoration: todo.complete ? "line-through" : "none",
-                margin: "5px 0 0 0",
+                fontSize: "25px",
               }}
             >
-              {heading}
-            </span>
-            <p style={{ maxWidth: "100%", wordBreak: "break-word" }}>
+              {todo.heading}
+            </Typography>
+            <Typography variant="h6" sx={{ fontSize: 18 }}>
               {todo.description}
-            </p>
-          </div>
+            </Typography>
+          </CardContent>
+          {/* Icon */}
           <div className="icon">
+            {/*  */}
             <div
               className="icon1"
               onClick={() => {
@@ -134,101 +142,95 @@ export default function ToDo({ todo, heading }) {
                 }}
               />
             </div>
-            {/* === Modal*/}
-            <div>
-              <Dialog
-                style={{ direction: "rtl" }}
-                open={open}
-                onClose={handleClose}
-              >
-                <DialogTitle>
-                  {"هل انت متأكد من رغبتك في حذف المهمه ؟"}
-                </DialogTitle>
-                <DialogContent>
-                  <DialogContentText>
-                    لا يمكن التراجع عن الحذف في حالة اختيار زر:(الحذف)
-                  </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleClose}>تراجع</Button>
-                  <Button
-                    onClick={handelDelete}
-                    autoFocus
-                    style={{ color: "#8E1616" }}
-                  >
-                    حذف
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </div>
-            {/* ============ */}
+            {/*  */}
             <div className="icon2">
               <DeleteOutlineOutlinedIcon
                 style={{ color: "red" }}
                 onClick={handleClickOpen}
               />
             </div>
-            {/* =======End Button Delete */}
-            {/* Modal Edit Input */}
-            <div>
-              <Dialog
-                maxWidth="xs"
-                style={{ direction: "rtl", margin: "0px" }}
-                open={openUpdate}
-                onClose={handleCloseUpdate}
-                fullWidth
-              >
-                <DialogTitle>{"تعديل المهمة"} </DialogTitle>
-                <DialogContent>
-                  <TextField
-                    autoFocus
-                    label="عنوان المهمة"
-                    fullWidth
-                    variant="standard"
-                    value={update.heading}
-                    onChange={(e) => {
-                      setUpdate({ ...update, heading: e.target.value });
-                    }}
-                  />
-                </DialogContent>
-                {/* ======== Input Tow  */}
-                <DialogContent>
-                  <TextField
-                    autoFocus
-                    id="name"
-                    label="وصف المهمه"
-                    fullWidth
-                    variant="standard"
-                    value={update.description}
-                    onChange={(e) => {
-                      setUpdate({ ...update, description: e.target.value });
-                    }}
-                  />
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={handleCloseUpdate}>تراجع</Button>
-
-                  <Button
-                    autoFocus
-                    style={{ color: "#8E1616" }}
-                    onClick={handelclickupdate}
-                  >
-                    تاكيد
-                  </Button>
-                </DialogActions>
-              </Dialog>
-            </div>
-            {/*End  Modal Edit Input */}
+            {/*  */}
             <div className="icon3">
               <BorderColorOutlinedIcon
                 style={{ color: "blue" }}
                 onClick={handleClickOpenUpdate}
               />
             </div>
+            {/*  */}
           </div>
-        </div>
+        </Card>
       </div>
-      {/* Input Field */}
+      {/* End card  */}
+      {/* === Modal*/}
+      <div>
+        <Dialog style={{ direction: "rtl" }} open={open} onClose={handleClose}>
+          <DialogTitle>{"هل انت متأكد من رغبتك في حذف المهمة ؟"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              لا يمكن التراجع عن الحذف في حالة اختيار زر:(الحذف)
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>تراجع</Button>
+            <Button
+              onClick={handelDelete}
+              autoFocus
+              style={{ color: "#8E1616" }}
+            >
+              حذف
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+      {/* Modal Edit Input */}
+      <div>
+        <Dialog
+          maxWidth="xs"
+          style={{ direction: "rtl", margin: "0px" }}
+          open={openUpdate}
+          onClose={handleCloseUpdate}
+          fullWidth
+        >
+          <DialogTitle>{"تعديل المهمة"} </DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              label="عنوان المهمة"
+              fullWidth
+              variant="standard"
+              value={update.heading}
+              onChange={(e) => {
+                setUpdate({ ...update, heading: e.target.value });
+              }}
+            />
+          </DialogContent>
+          {/* ======== Input Tow  */}
+          <DialogContent>
+            <TextField
+              autoFocus
+              id="name"
+              label="وصف المهمه"
+              fullWidth
+              variant="standard"
+              value={update.description}
+              onChange={(e) => {
+                setUpdate({ ...update, description: e.target.value });
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseUpdate}>تراجع</Button>
+
+            <Button
+              autoFocus
+              style={{ color: "#8E1616" }}
+              onClick={handelclickupdate}
+            >
+              تاكيد
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </>
   );
 }
