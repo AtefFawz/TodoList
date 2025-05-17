@@ -43,7 +43,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="sm">
+      <Container maxWidth="sm" disableGutters>
         {/* COntText */}
         <ContextTodo.Provider value={{ data, setData }}>
           <div className="App">
