@@ -30,9 +30,9 @@ export default function ToDoList() {
   });
   // ====== Conditional Rendering
   let editing = data;
-  if (values == "done") {
+  if (values === "done") {
     editing = all;
-  } else if (values == "not-done") {
+  } else if (values === "not-done") {
     editing = notDone;
   } else {
     editing = data;

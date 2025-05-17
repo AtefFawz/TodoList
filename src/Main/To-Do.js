@@ -54,7 +54,7 @@ export default function ToDo({ todo, heading }) {
   // Function delete
   function handelDelete() {
     const UpdateDelete = data.filter((e) => {
-      return e.id != todo.id;
+      return e.id !== todo.id;
     });
     setData(UpdateDelete);
     localStorage.setItem("data", JSON.stringify(UpdateDelete));
@@ -107,23 +107,26 @@ export default function ToDo({ todo, heading }) {
             padding: "0  0  0 10px",
             color: "white",
             margin: "10px 0 0 0",
-            wordWrap: " break-word",
-            overflowWrap: "break-word",
-            textAlign: "right",
           }}
         >
-          <CardContent>
+          <CardContent style={{ maxWidth: "70%" }}>
             <Typography
-              variant="h5"
+              variant="h4"
               style={{
                 textDecoration: todo.complete ? "line-through" : "none",
                 fontSize: "20px",
-                maxWidth: "70%",
               }}
             >
               {todo.heading}
             </Typography>
-            <Typography variant="p" sx={{ fontSize: 15 }}>
+            <Typography
+              variant="p"
+              sx={{
+                fontSize: 15,
+                wordWrap: " break-word",
+                overflowWrap: "break-word",
+              }}
+            >
               {todo.description}
             </Typography>
           </CardContent>
@@ -212,7 +215,7 @@ export default function ToDo({ todo, heading }) {
             <TextField
               autoFocus
               id="name"
-              label="وصف المهمه"
+              label="وصف المهمة"
               fullWidth
               variant="standard"
               value={update.description}

@@ -18,7 +18,7 @@ import { useState } from "react";
 
 // Import Themes
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { orange, purple } from "@mui/material/colors";
+import { purple } from "@mui/material/colors";
 // Variable Themes
 const theme = createTheme({
   palette: {
