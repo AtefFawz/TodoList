@@ -104,6 +104,7 @@ export default function ToDo({ todo, heading }) {
                 overflowWrap: "break-word",
                 height: "100%",
                 padding: "0 5px 0 0",
+                // maxWidth: "100%",
               }}
             >
               <h1 style={{ fontSize: "22px" }}>{todo.heading}</h1>
@@ -120,8 +121,7 @@ export default function ToDo({ todo, heading }) {
               style={{
                 height: "100%",
                 display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+                justifyContent: "flex-end",
                 padding: "0 0 0 5px",
               }}
             >
