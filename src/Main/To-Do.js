@@ -107,11 +107,10 @@ export default function ToDo({ todo, heading }) {
                 wordWrap: " break-word",
                 overflowWrap: "break-word",
                 height: "100%",
+                padding: "0 5px 0 0",
               }}
             >
-              <span style={{ fontSize: "20px", padding: "10px 0 0 0" }}>
-                {todo.heading}
-              </span>
+              <h1 style={{ fontSize: "22px" }}>{todo.heading}</h1>
               <p
                 style={{ wordWrap: " break-word", overflowWrap: "break-word" }}
               >
@@ -125,9 +124,12 @@ export default function ToDo({ todo, heading }) {
               style={{
                 height: "100%",
                 display: "flex",
-                justifyContent: "space-around",
+                justifyContent: "space-evenly",
                 alignItems: "center",
-                gap: "2px",
+                gap: "1px",
+                padding:"0 0 0 5px"
+                // width: "100%",
+
               }}
             >
               {/*  */}
