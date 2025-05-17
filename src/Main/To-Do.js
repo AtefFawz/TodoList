@@ -99,13 +99,19 @@ export default function ToDo({ todo, heading }) {
           <Grid size={7}>
             <div
               style={{
-                textDecoration: todo.complete ? "line-through" : "none",
                 wordWrap: " break-word",
                 overflowWrap: "break-word",
                 padding: "0 5px 0 0",
               }}
             >
-              <h1 style={{ fontSize: "22px" }}>{todo.heading}</h1>
+              <h1
+                style={{
+                  fontSize: "22px",
+                  textDecoration: todo.complete ? "line-through" : "none",
+                }}
+              >
+                {todo.heading}
+              </h1>
               <p
                 style={{ wordWrap: " break-word", overflowWrap: "break-word" }}
               >
