@@ -18,6 +18,8 @@ import { ContextTodo } from "./Contexts/Context";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+// Import Gird
+import Grid from "@mui/material/Grid";
 // Parent Function
 export default function ToDo({ todo, heading }) {
   // Hook Modal
@@ -96,75 +98,72 @@ export default function ToDo({ todo, heading }) {
     <>
       {/* Start Card */}
       <div>
-        <Card
-          className="toDo"
-          sx={{
-            backgroundColor: "rgb(111, 0, 111)",
-            minWidth: 275,
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "0  0  0 10px",
-            color: "white",
-            margin: "10px 0 0 0",
-          }}
-        >
-          <CardContent style={{ maxWidth: "70%" }}>
-            <Typography
-              variant="h4"
+        {/* Use Grid layOut */}
+        <Grid container spacing={2} className="toDo">
+          <Grid size={8}>
+            <div
               style={{
                 textDecoration: todo.complete ? "line-through" : "none",
-                fontSize: "20px",
-              }}
-            >
-              {todo.heading}
-            </Typography>
-            <Typography
-              variant="p"
-              sx={{
-                fontSize: 15,
                 wordWrap: " break-word",
                 overflowWrap: "break-word",
+                height: "100%",
               }}
             >
-              {todo.description}
-            </Typography>
-          </CardContent>
-          <div className="icon" style={{ maxWidth: "30%" }}>
-            {/*  */}
+              <span style={{ fontSize: "20px", padding: "10px 0 0 0" }}>
+                {todo.heading}
+              </span>
+              <p
+                style={{ wordWrap: " break-word", overflowWrap: "break-word" }}
+              >
+                {todo.description}
+              </p>
+            </div>
+          </Grid>
+          <Grid size={4}>
             <div
-              className="icon1"
-              onClick={() => {
-                handelClick();
-              }}
+              className="icon"
               style={{
-                backgroundColor: todo.complete ? "green" : "white",
+                height: "100%",
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                gap: "2px",
               }}
             >
-              <DoneOutlineOutlinedIcon
-                style={{
-                  color: todo.complete ? "white" : "green",
+              {/*  */}
+              <div
+                className="icon1"
+                onClick={() => {
+                  handelClick();
                 }}
-              />
+                style={{
+                  backgroundColor: todo.complete ? "green" : "white",
+                }}
+              >
+                <DoneOutlineOutlinedIcon
+                  style={{
+                    color: todo.complete ? "white" : "green",
+                  }}
+                />
+              </div>
+              {/*  */}
+              <div className="icon2">
+                <DeleteOutlineOutlinedIcon
+                  style={{ color: "red" }}
+                  onClick={handleClickOpen}
+                />
+              </div>
+              {/*  */}
+              <div className="icon3">
+                <BorderColorOutlinedIcon
+                  style={{ color: "blue" }}
+                  onClick={handleClickOpenUpdate}
+                />
+              </div>
+              {/*  */}
             </div>
-            {/*  */}
-            <div className="icon2">
-              <DeleteOutlineOutlinedIcon
-                style={{ color: "red" }}
-                onClick={handleClickOpen}
-              />
-            </div>
-            {/*  */}
-            <div className="icon3">
-              <BorderColorOutlinedIcon
-                style={{ color: "blue" }}
-                onClick={handleClickOpenUpdate}
-              />
-            </div>
-            {/*  */}
-          </div>
-          {/* Icon */}
-        </Card>
+          </Grid>
+        </Grid>
       </div>
       {/* End card  */}
       {/* === Modal*/}

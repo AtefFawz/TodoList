@@ -53,6 +53,12 @@ body {
 }
 .toDo {
   transition: all 0.3s !important;
+  background-color: rgb(111, 0, 111)
+  ;display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding-right: 10px;
 }
 .toDo:hover {
   padding-top: 10px;
