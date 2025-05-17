@@ -14,10 +14,6 @@ import TextField from "@mui/material/TextField";
 // Import COntext
 import { useContext } from "react";
 import { ContextTodo } from "./Contexts/Context";
-// Import Card ============
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
 // Import Gird
 import Grid from "@mui/material/Grid";
 // Parent Function
@@ -127,9 +123,8 @@ export default function ToDo({ todo, heading }) {
                 justifyContent: "space-evenly",
                 alignItems: "center",
                 gap: "1px",
-                padding:"0 0 0 5px"
+                padding: "0 0 0 5px",
                 // width: "100%",
-
               }}
             >
               {/*  */}
