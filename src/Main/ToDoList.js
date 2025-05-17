@@ -10,7 +10,6 @@ import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 //  Import Context
 import { useContext, useState, useEffect } from "react";
 import { ContextTodo } from "./Contexts/Context";
-import { ClassNames } from "@emotion/react";
 //===============
 export default function ToDoList() {
   // ========= Use Context
@@ -82,34 +81,34 @@ export default function ToDoList() {
         </ToggleButtonGroup>
       </div>
       {Maps}
-      <div style={{margin:"10px 0 0 0"}}>
-      <Grid container spacing={1}>
-        <Grid size={8}>
-          <TextField
-            style={{ width: "100%",  }}
-            value={Inputs}
-            onChange={(e) => {
-              setInput(e.target.value);
-            }}
-          />
+      <div style={{ margin: "10px 0 0 0" }}>
+        <Grid container spacing={1}>
+          <Grid size={8}>
+            <TextField
+              style={{ width: "100%" }}
+              value={Inputs}
+              onChange={(e) => {
+                setInput(e.target.value);
+              }}
+            />
+          </Grid>
+          <Grid size={4}>
+            <Button
+              variant="contained"
+              style={{
+                height: "100%",
+                width: "100%",
+                fontSize: "20px",
+              }}
+              onClick={() => {
+                handelClick();
+              }}
+              disabled={Inputs === ""}
+            >
+              اضافة
+            </Button>
+          </Grid>
         </Grid>
-        <Grid size={4}>
-          <Button
-            variant="contained"
-            style={{
-              height: "100%",
-              width: "100%",
-              fontSize: "20px",
-            }}
-            onClick={() => {
-              handelClick();
-            }}
-            disabled={Inputs === ""}
-          >
-            اضافة
-          </Button>
-        </Grid>
-      </Grid>
       </div>
     </div>
   );
