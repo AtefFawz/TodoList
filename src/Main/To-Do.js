@@ -120,11 +120,9 @@ export default function ToDo({ todo, heading }) {
               style={{
                 height: "100%",
                 display: "flex",
-                justifyContent: "space-evenly",
+                justifyContent: "space-between",
                 alignItems: "center",
-                gap: "1px",
                 padding: "0 0 0 5px",
-                // width: "100%",
               }}
             >
               {/*  */}
