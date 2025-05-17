@@ -18,7 +18,6 @@ import { ContextTodo } from "./Contexts/Context";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-
 // Parent Function
 export default function ToDo({ todo, heading }) {
   // Hook Modal
@@ -105,9 +104,12 @@ export default function ToDo({ todo, heading }) {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "0 10px",
+            padding: "0  0  0 10px",
             color: "white",
             margin: "10px 0 0 0",
+            wordWrap: " break-word",
+            overflowWrap: "break-word",
+            textAlign: "right",
           }}
         >
           <CardContent>
@@ -115,17 +117,17 @@ export default function ToDo({ todo, heading }) {
               variant="h5"
               style={{
                 textDecoration: todo.complete ? "line-through" : "none",
-                fontSize: "25px",
+                fontSize: "20px",
+                maxWidth: "70%",
               }}
             >
               {todo.heading}
             </Typography>
-            <Typography variant="h6" sx={{ fontSize: 18 }}>
+            <Typography variant="p" sx={{ fontSize: 15 }}>
               {todo.description}
             </Typography>
           </CardContent>
-          {/* Icon */}
-          <div className="icon">
+          <div className="icon" style={{ maxWidth: "30%" }}>
             {/*  */}
             <div
               className="icon1"
@@ -158,6 +160,7 @@ export default function ToDo({ todo, heading }) {
             </div>
             {/*  */}
           </div>
+          {/* Icon */}
         </Card>
       </div>
       {/* End card  */}
