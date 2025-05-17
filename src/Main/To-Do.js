@@ -95,16 +95,14 @@ export default function ToDo({ todo, heading }) {
       {/* Start Card */}
       <div>
         {/* Use Grid layOut */}
-        <Grid container spacing={2} className="toDo">
-          <Grid size={8}>
+        <Grid container spacing={1} className="toDo">
+          <Grid size={7}>
             <div
               style={{
                 textDecoration: todo.complete ? "line-through" : "none",
                 wordWrap: " break-word",
                 overflowWrap: "break-word",
-                height: "100%",
                 padding: "0 5px 0 0",
-                // maxWidth: "100%",
               }}
             >
               <h1 style={{ fontSize: "22px" }}>{todo.heading}</h1>
@@ -115,16 +113,8 @@ export default function ToDo({ todo, heading }) {
               </p>
             </div>
           </Grid>
-          <Grid size={4}>
-            <div
-              className="icon"
-              style={{
-                height: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
-                padding: "0 0 0 5px",
-              }}
-            >
+          <Grid size={5}>
+            <div className="icon">
               {/*  */}
               <div
                 className="icon1"

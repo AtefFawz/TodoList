@@ -53,12 +53,12 @@ body {
 }
 .toDo {
   transition: all 0.3s !important;
-  background-color: rgb(111, 0, 111)
-  ;display: flex;
+  background-color: rgb(111, 0, 111);
+  display: flex;
   justify-content: center;
   align-items: center;
   color: white;
-  padding-right: 10px;
+  padding: 0 10px;
   border-radius: 7px;
   margin-bottom: 10px;
 }
@@ -77,16 +77,18 @@ body {
 
 .icon {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   color: white;
+  justify-content: flex-end;
 }
 .icon1,
 .icon2,
 .icon3 {
   background-color: white;
   border-radius: 50%;
-  width: 35px;
-  height: 35px;
+  /* width: 35px;
+  height: 35px; */
+  padding: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -97,16 +99,16 @@ body {
   cursor: pointer;
 }
 .icon1:hover {
-  padding: 5px;
-  box-shadow: 0 7px 7px rgb(0, 0, 0.4);
+  padding: 6px;
+  box-shadow: 0 7px 7px rgb(0, 0, 0, 0.4);
 }
 .icon2:hover {
   background-color: rgba(255, 0, 0, 0.271);
-  padding: 5px;
-  box-shadow: 0 7px 7px rgb(0, 0, 0.4);
+  padding: 6px;
+  box-shadow: 0 7px 7px rgb(0, 0, 0, 0.4);
 }
 .icon3:hover {
   background-color: rgba(0, 0, 255, 0.168);
-  padding: 5px;
-  box-shadow: 0 7px 7px rgb(0, 0, 0.4);
+  padding: 6px;
+  box-shadow: 0 7px 7px rgb(0, 0, 0, 0.4);
 }
