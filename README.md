@@ -1,70 +1,76 @@
-# Getting Started with Create React App
+# نَواة | مساحة إنجازك
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+تطبيق إنتاجية عربي لإدارة المهام والتذكيرات والتركيز، مبني باستخدام React. صُمم ليعمل على سطح المكتب والهاتف، ويمكن تثبيته كتطبيق ويب تقدمي (PWA).
 
-## Available Scripts
+## المزايا
 
-In the project directory, you can run:
+- إدارة المهام: إنشاء، تعديل، حذف، نسخ، إكمال، وإعادة فتح.
+- تصنيفات وأولويات ومواعيد إنجاز.
+- تذكيرات بتاريخ ووقت محددين، وسجل تنبيهات داخل التطبيق.
+- إشعارات نظام بعد منح إذن المتصفح، مع فتح المهمة من الإشعار.
+- تأجيل التذكير 10 دقائق، وعدّاد للتنبيهات غير المقروءة.
+- مؤقت تركيز Pomodoro وإحصائيات النشاط الأسبوعي.
+- بحث وفلاتر وترتيب حسب التاريخ أو الأولوية أو التذكير.
+- مظهر فاتح وداكن، وتخطيط RTL متجاوب مع شريط تنقل سفلي للهاتف.
+- تثبيت على الشاشة الرئيسية، وفتح مستقل، وأيقونات تطبيق.
+- Service Worker لتخزين واجهة التطبيق وملفاته مؤقتًا والعمل دون اتصال بعد أول تحميل ناجح.
+- استيراد وتصدير نسخة احتياطية بصيغة JSON.
+- مزامنة تغييرات المهام بين علامات التبويب المفتوحة على الجهاز نفسه.
+- تنقل جانبي مستقل بين الصفحات والتصنيفات، مع حالات نشطة واضحة ودعم إغلاق القائمة على الهاتف.
 
-### `npm start`
+## المتطلبات
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Node.js 18 أو أحدث.
+- npm.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## التشغيل المحلي
 
-### `npm test`
+```bash
+npm install
+npm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## فحص الاختبارات وبناء الإنتاج
 
-### `npm run build`
+```bash
+npm test -- --watchAll=false
+npm run build
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+يتم تسجيل Service Worker في نسخة الإنتاج فقط. اختبر التثبيت والإشعارات من HTTPS أو `localhost`؛ المتصفحات لا تسمح بكل خصائص PWA في سياقات HTTP العادية.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## التثبيت على الهاتف
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Android / Chrome
 
-### `npm run eject`
+1. افتح رابط التطبيق المنشور في Chrome.
+2. اختر **تثبيت التطبيق** من واجهة نَواة أو **Install app / Add to Home screen** من قائمة المتصفح.
+3. افتح نَواة من الأيقونة الجديدة.
+4. من الإعدادات أو مركز التنبيهات، فعّل إشعارات الجهاز واسمح للمتصفح بها.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### iPhone / iPad
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. افتح رابط التطبيق من Safari.
+2. اضغط **مشاركة** ثم **إضافة إلى الشاشة الرئيسية**.
+3. افتح التطبيق من الأيقونة. دعم إشعارات الويب على iOS يتطلب إصدارًا حديثًا وتشغيل التطبيق من الشاشة الرئيسية، وقد يختلف حسب إصدار النظام.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## حدود التذكيرات والإشعارات
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+التذكيرات المحلية تُفحص أثناء تشغيل واجهة نَواة، بما في ذلك عند العودة إلى التطبيق بعد إخفائه. يمكن للمتصفح إظهار إشعار نظام عند استحقاق التذكير بعد منح الإذن. لكن المتصفح قد يقيّد المؤقتات في الخلفية، ولا يضمن تنفيذ مؤقت محلي بعد إغلاق التطبيق بالكامل أو إيقاف الجهاز.
 
-## Learn More
+لضمان وصول إشعارات حتى عندما يكون التطبيق مغلقًا، يلزم إعداد Web Push كامل: خادم HTTPS، مفاتيح VAPID، حفظ اشتراكات Push للمستخدمين، وخدمة خلفية ترسل الإشعارات في الوقت المطلوب. لا يحتوي هذا المشروع على خادم Push أو مفاتيح VAPID، لذلك لا يدّعي ضمان التنبيه بعد الإغلاق. يحتوي Service Worker على نقطة استقبال `push` والتعامل مع النقر على الإشعار لتسهيل إضافة الخادم لاحقًا.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## البيانات والخصوصية
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- تُحفظ المهام والإعدادات وسجل التنبيهات على الجهاز باستخدام `localStorage`.
+- لا توجد قاعدة بيانات أو حساب مستخدم أو مزامنة سحابية في هذه النسخة.
+- احفظ نسخة JSON احتياطية قبل تغيير المتصفح أو مسح بيانات الموقع.
+- حذف بيانات الموقع من المتصفح قد يحذف بيانات التطبيق المحلية.
 
-### Code Splitting
+## النشر إلى GitHub Pages
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```bash
+npm run deploy
+```
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+تأكد من أن قيمة `homepage` في `package.json` تشير إلى رابط مستودع GitHub Pages الصحيح قبل النشر؛ نطاق HTTPS مطلوب لميزات التثبيت والإشعارات.
