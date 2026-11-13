@@ -1,19 +1,17 @@
 {
   "files": {
-    "main.css": "/TodoList/static/css/main.d5ddba57.css",
-    "main.js": "/TodoList/static/js/main.053ea396.js",
-    "static/js/453.a50becb7.chunk.js": "/TodoList/static/js/453.a50becb7.chunk.js",
-    "static/media/Alexandria-Bold.ttf": "/TodoList/static/media/Alexandria-Bold.0cf36a1f1e325bcf6dcf.ttf",
-    "static/media/Alexandria-Medium.ttf": "/TodoList/static/media/Alexandria-Medium.e529e0fe5e18e7ad22c4.ttf",
-    "static/media/Alexandria-Light.ttf": "/TodoList/static/media/Alexandria-Light.38ea9ca48ff224061348.ttf",
-    "static/media/Alexandria-Regular.ttf": "/TodoList/static/media/Alexandria-Regular.4535b8eea67a5b9234dc.ttf",
-    "index.html": "/TodoList/index.html",
-    "main.d5ddba57.css.map": "/TodoList/static/css/main.d5ddba57.css.map",
-    "main.053ea396.js.map": "/TodoList/static/js/main.053ea396.js.map",
-    "453.a50becb7.chunk.js.map": "/TodoList/static/js/453.a50becb7.chunk.js.map"
+    "main.css": "/static/css/main.65905dfe.css",
+    "main.js": "/static/js/main.6291285c.js",
+    "static/media/Alexandria-SemiBold.ttf": "/static/media/Alexandria-SemiBold.9825eae4f22e4372d850.ttf",
+    "static/media/Alexandria-Bold.ttf": "/static/media/Alexandria-Bold.0cf36a1f1e325bcf6dcf.ttf",
+    "static/media/Alexandria-Medium.ttf": "/static/media/Alexandria-Medium.e529e0fe5e18e7ad22c4.ttf",
+    "static/media/Alexandria-Regular.ttf": "/static/media/Alexandria-Regular.4535b8eea67a5b9234dc.ttf",
+    "index.html": "/index.html",
+    "main.65905dfe.css.map": "/static/css/main.65905dfe.css.map",
+    "main.6291285c.js.map": "/static/js/main.6291285c.js.map"
   },
   "entrypoints": [
-    "static/css/main.d5ddba57.css",
-    "static/js/main.053ea396.js"
+    "static/css/main.65905dfe.css",
+    "static/js/main.6291285c.js"
   ]
 }
