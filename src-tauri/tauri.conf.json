@@ -1,0 +1,45 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Nawa",
+  "version": "4.0.0",
+  "identifier": "com.ateffawzy.nawa",
+  "build": {
+    "beforeDevCommand": "npm start",
+    "devUrl": "http://localhost:3000",
+    "beforeBuildCommand": "npm run build:native",
+    "frontendDist": "../build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "نَواة | مساحة إنجازك",
+        "width": 1280,
+        "height": 860,
+        "minWidth": 900,
+        "minHeight": 640,
+        "resizable": true,
+        "fullscreen": false,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Productivity",
+    "shortDescription": "مساحة عربية لإدارة المهام والتركيز",
+    "longDescription": "نَواة تطبيق إنتاجية عربي مستقل لإدارة المهام والتذكيرات وجلسات التركيز والإحصائيات.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.png",
+      "icons/icon.ico",
+      "icons/icon.icns"
+    ]
+  }
+}

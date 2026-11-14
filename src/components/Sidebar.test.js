@@ -71,6 +71,11 @@ test("sidebar utility actions are connected and close the mobile drawer", () => 
 test("the active destination and selected category expose accessible state", () => {
   render(<Sidebar {...baseProps} view="today" selectedCategory="العمل" />);
 
-  expect(screen.getByRole("button", { name: /مهام اليوم/ })).not.toHaveAttribute("aria-current", "page");
-  expect(screen.getByRole("button", { name: "العمل" })).toHaveAttribute("aria-pressed", "true");
+  expect(
+    screen.getByRole("button", { name: /مهام اليوم/ }),
+  ).not.toHaveAttribute("aria-current", "page");
+  expect(screen.getByRole("button", { name: "العمل" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
 });

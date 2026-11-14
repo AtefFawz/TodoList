@@ -12,6 +12,7 @@ import useTasks from "./hooks/useTasks";
 import useNotifications from "./hooks/useNotifications";
 import usePwa from "./hooks/usePwa";
 import { DEFAULT_CATEGORIES } from "./data/categories";
+import { pickBackupFile, saveBackupFile } from "./platform/nativeRuntime";
 import { filterTasks, getCategoryColor, getTaskStats, localDateString, sortTasks, THEME_KEY } from "./utils/taskUtils";
 
 const VIEW_TITLES = {
@@ -79,7 +80,13 @@ function App() {
     if (themeColor) themeColor.setAttribute("content", theme === "dark" ? "#11121a" : "#f5f6fa");
     try { window.localStorage.setItem(THEME_KEY, theme); }
     catch (error) { console.warn("تعذّر حفظ المظهر", error); }
-  }, [theme]);
+    if (pwa.native && pwa.platform !== "desktop") {
+      import("@capacitor/status-bar").then(({ StatusBar, Style }) => {
+        StatusBar.setStyle({ style: theme === "dark" ? Style.Light : Style.Dark }).catch(() => {});
+        StatusBar.setBackgroundColor({ color: theme === "dark" ? "#11121a" : "#f5f6fa" }).catch(() => {});
+      }).catch(() => {});
+    }
+  }, [theme, pwa.native, pwa.platform]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -146,6 +153,15 @@ function App() {
   }, [tasks, markTaskRead, notify]);
 
   useEffect(() => {
+    const onNativeTaskOpen = (event) => {
+      const taskId = event.detail?.taskId;
+      if (taskId) openTaskById(taskId);
+    };
+    window.addEventListener("nawa-open-task", onNativeTaskOpen);
+    return () => window.removeEventListener("nawa-open-task", onNativeTaskOpen);
+  }, [openTaskById]);
+
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const taskId = params.get("task");
     const requestedView = params.get("view");
@@ -160,6 +176,32 @@ function App() {
     const query = params.toString();
     window.history.replaceState({}, document.title, `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`);
   }, [openTaskById, openCreateModal]);
+
+  useEffect(() => {
+    if (!pwa.native || pwa.platform !== "android") return undefined;
+    let active = true;
+    let listener = null;
+    import("@capacitor/app").then(({ App: NativeApp }) => NativeApp.addListener("backButton", () => {
+      if (modalOpen) { setModalOpen(false); setEditingTask(null); return; }
+      if (settingsOpen) { setSettingsOpen(false); return; }
+      if (showAlerts) { setShowAlerts(false); return; }
+      if (mobileMenuOpen) { setMobileMenuOpen(false); return; }
+      if (selectedCategory || view !== "all") {
+        setSelectedCategory("");
+        setView("all");
+        setStatus("all");
+        return;
+      }
+      NativeApp.exitApp();
+    })).then((createdListener) => {
+      listener = createdListener;
+      if (!active) listener?.remove();
+    }).catch((error) => console.warn("تعذّر تفعيل زر الرجوع في Android:", error));
+    return () => {
+      active = false;
+      listener?.remove();
+    };
+  }, [pwa.native, pwa.platform, modalOpen, settingsOpen, showAlerts, mobileMenuOpen, selectedCategory, view]);
 
   useEffect(() => {
     const handleShortcuts = (event) => {
@@ -213,27 +255,22 @@ function App() {
     notify(task?.completed ? "تمت إعادة فتح المهمة" : "أحسنت! تمت إضافة إنجاز جديد 🎉");
   };
 
-  const exportBackup = () => {
-    const backup = { app: "Nawa Tasks", schemaVersion: 3, exportedAt: new Date().toISOString(), tasks };
-    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = `nawa-backup-${localDateString()}.json`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    notify("تم تجهيز النسخة الاحتياطية");
+  const exportBackup = async () => {
+    const backup = { app: "Nawa Tasks", schemaVersion: 4, exportedAt: new Date().toISOString(), tasks };
+    const filename = `nawa-backup-${localDateString()}.json`;
+    try {
+      const saved = await saveBackupFile(filename, JSON.stringify(backup, null, 2));
+      if (saved) notify("تم تجهيز النسخة الاحتياطية");
+      else notify("لم يتم حفظ النسخة الاحتياطية أو تم إلغاء المشاركة");
+    } catch (error) {
+      console.warn("تعذّر تصدير النسخة الاحتياطية:", error);
+      notify("تعذّر تصدير النسخة الاحتياطية");
+    }
   };
 
-  const importBackup = async (event) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-    if (!file) return;
+  const importBackupText = async (contents) => {
     try {
-      if (file.size > 5 * 1024 * 1024) throw new Error("حجم الملف أكبر من 5 ميجابايت.");
-      const parsed = JSON.parse(await file.text());
+      const parsed = JSON.parse(contents);
       const incoming = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.tasks) ? parsed.tasks : null);
       if (!incoming) throw new Error("الملف لا يحتوي على قائمة مهام صالحة.");
       if (!window.confirm(`سيتم استبدال مهامك الحالية بـ ${incoming.length} مهمة من الملف. هل تريد المتابعة؟`)) return;
@@ -244,6 +281,30 @@ function App() {
     } catch (error) {
       notify(error.message || "تعذّر قراءة النسخة الاحتياطية");
     }
+  };
+
+  const importBackup = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      notify("حجم الملف أكبر من 5 ميجابايت.");
+      return;
+    }
+    await importBackupText(await file.text());
+  };
+
+  const handleImportBackup = async () => {
+    if (pwa.platform === "desktop") {
+      try {
+        const contents = await pickBackupFile();
+        if (contents) await importBackupText(contents);
+      } catch {
+        notify("تعذّر فتح ملف النسخة الاحتياطية");
+      }
+      return;
+    }
+    importInputRef.current?.click();
   };
 
   const handleClearCompleted = () => {
@@ -310,7 +371,7 @@ function App() {
         onSelectCategory={changeCategory}
         onAdd={openCreateModal}
         onExport={exportBackup}
-        onImport={() => importInputRef.current?.click()}
+        onImport={handleImportBackup}
         onSettings={() => setSettingsOpen(true)}
         mobileOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
@@ -410,13 +471,13 @@ function App() {
 
             <div className="settings-section-label">التنبيهات والتذكيرات</div>
             <div className="setting-row"><div><strong>تنبيهات داخل التطبيق</strong><span>عرض تذكير عند استحقاق المهمة أثناء فتح التطبيق</span></div><label className="switch-control"><input aria-label="تفعيل تنبيهات داخل التطبيق" type="checkbox" checked={notificationSettings.inAppEnabled} onChange={(event) => updateSettings({ inAppEnabled: event.target.checked })} /><span /></label></div>
-            <div className="setting-row"><div><strong>إشعارات الجهاز</strong><span>{notificationPermission === "granted" ? "السماح بإظهار تنبيهات النظام" : notificationPermission === "denied" ? "اسمح بها من إعدادات الموقع في المتصفح" : notificationPermission === "unsupported" ? "غير مدعومة في هذا المتصفح" : "تحتاج إلى موافقة المتصفح أولًا"}</span></div>{notificationPermission === "granted" ? <div className="setting-buttons"><label className="switch-control"><input aria-label="تفعيل إشعارات الجهاز" type="checkbox" checked={notificationSettings.systemEnabled} onChange={(event) => updateSettings({ systemEnabled: event.target.checked })} /><span /></label><button className="button button-outline" onClick={handleTestNotification}>اختبار</button></div> : notificationPermission === "default" ? <button className="button button-outline" onClick={handleNotificationPermission}>طلب الإذن</button> : null}</div>
+            <div className="setting-row"><div><strong>إشعارات الجهاز</strong><span>{notificationPermission === "granted" ? "إشعارات نظام التشغيل مسموح بها" : notificationPermission === "denied" ? (pwa.native ? "اسمح بالإشعارات من إعدادات التطبيق في النظام" : "اسمح بها من إعدادات الموقع في المتصفح") : notificationPermission === "unsupported" ? "غير مدعومة في هذا المتصفح" : "تحتاج إلى موافقة نظام التشغيل أولًا"}</span></div>{notificationPermission === "granted" ? <div className="setting-buttons"><label className="switch-control"><input aria-label="تفعيل إشعارات الجهاز" type="checkbox" checked={notificationSettings.systemEnabled} onChange={(event) => updateSettings({ systemEnabled: event.target.checked })} /><span /></label><button className="button button-outline" onClick={handleTestNotification}>اختبار</button></div> : notificationPermission === "default" ? <button className="button button-outline" onClick={handleNotificationPermission}>طلب الإذن</button> : null}</div>
             <div className="setting-row"><div><strong>الاهتزاز</strong><span>اهتزاز الجهاز عند وصول تذكير (على الأجهزة المدعومة)</span></div><label className="switch-control"><input aria-label="تفعيل اهتزاز الجهاز" type="checkbox" checked={notificationSettings.vibrate} onChange={(event) => updateSettings({ vibrate: event.target.checked })} /><span /></label></div>
-            <p className="notification-limit-note">مهم: التذكيرات المحلية تعمل أثناء تشغيل نَواة. وصولها بعد إغلاق التطبيق بالكامل يحتاج إلى خدمة Push وخادم إرسال مستقل.</p>
+            <p className="notification-limit-note">{pwa.platform === "android" || pwa.platform === "ios" ? "تذكيرات الهاتف تُجدول بواسطة نظام التشغيل ويمكن أن تصل والتطبيق مغلق. تُجدول أقرب 60 مهمة تذكيرًا بسبب حد قائمة iOS، ويعيد التطبيق ملء القائمة عند فتحه." : pwa.platform === "desktop" ? "تظهر إشعارات سطح المكتب عند استحقاق المهمة ما دام التطبيق يعمل. لا يضمن هذا الإصدار تشغيل تذكير مجدول بعد إغلاق التطبيق بالكامل." : "تعمل التذكيرات في نسخة المتصفح أثناء تشغيل التطبيق. قد يقيّد المتصفح المؤقتات في الخلفية أو بعد إغلاق الصفحة."}</p>
 
             <div className="settings-section-label">تجربة التطبيق</div>
-            <div className="setting-row"><div><strong>تثبيت نَواة</strong><span>{pwa.installed ? "التطبيق مثبت ويعمل في وضع التطبيق" : pwa.iosInstallHint ? "من Safari اضغط مشاركة ثم إضافة إلى الشاشة الرئيسية" : "ثبّت التطبيق على الشاشة الرئيسية لفتحه بملء الشاشة"}</span></div>{pwa.canInstall && <button className="button button-primary" onClick={handleInstall}><Icon name="download" size={16} />تثبيت التطبيق</button>}</div>
-            <div className="setting-row"><div><strong>النسخ الاحتياطي</strong><span>احتفظ بمهامك أو استعد نسخة سابقة</span></div><div className="setting-buttons"><button className="button button-outline" onClick={exportBackup}><Icon name="download" size={16} />تصدير</button><button className="button button-outline" onClick={() => importInputRef.current?.click()}><Icon name="upload" size={16} />استيراد</button></div></div>
+            <div className="setting-row"><div><strong>{pwa.native ? "نسخة التطبيق" : "تثبيت نَواة"}</strong><span>{pwa.platform === "android" ? "تطبيق Android مستقل مع إشعارات محلية وصلاحيات الجهاز" : pwa.platform === "ios" ? "تطبيق iPhone مستقل مع إشعارات محلية ومشاركة الملفات" : pwa.platform === "desktop" ? "تطبيق سطح مكتب مستقل يعمل كبرنامج على جهازك" : pwa.installed ? "التطبيق مثبت ويعمل في وضع التطبيق" : pwa.iosInstallHint ? "من Safari اضغط مشاركة ثم إضافة إلى الشاشة الرئيسية" : "ثبّت التطبيق على الشاشة الرئيسية لفتحه بملء الشاشة"}</span></div>{pwa.canInstall && <button className="button button-primary" onClick={handleInstall}><Icon name="download" size={16} />تثبيت التطبيق</button>}</div>
+            <div className="setting-row"><div><strong>النسخ الاحتياطي</strong><span>احتفظ بمهامك أو استعد نسخة سابقة</span></div><div className="setting-buttons"><button className="button button-outline" onClick={exportBackup}><Icon name="download" size={16} />تصدير</button><button className="button button-outline" onClick={handleImportBackup}><Icon name="upload" size={16} />استيراد</button></div></div>
             <div className="setting-row setting-danger"><div><strong>تنظيف المهام المكتملة</strong><span>حذف جميع المهام التي تم إنجازها</span></div><button className="button button-danger" onClick={handleClearCompleted} disabled={!stats.completed}><Icon name="trash" size={16} />حذف المكتملة</button></div>
             <p className="privacy-note"><Icon name="check" size={16} /> بياناتك تُحفظ محليًا على هذا الجهاز ولا تُرسل إلى خادم خارجي.</p>
           </section>

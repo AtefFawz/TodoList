@@ -5,7 +5,8 @@ const isLocalhost = Boolean(
 );
 
 export function registerServiceWorker() {
-  if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
+  const isNativeShell = Boolean(window.Capacitor?.isNativePlatform?.() || window.__TAURI_INTERNALS__);
+  if (isNativeShell || process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
 
   const publicUrl = new URL(process.env.PUBLIC_URL || "/", window.location.href);
   if (publicUrl.origin !== window.location.origin) return;

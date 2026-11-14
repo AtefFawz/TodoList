@@ -1,14 +1,26 @@
 {
     "name": "nawa-tasks",
-    "version": "3.0.0",
+    "version": "4.0.0",
     "private": true,
     "dependencies": {
+        "@capacitor/app": "^8.0.0",
+        "@capacitor/core": "^8.6.0",
+        "@capacitor/filesystem": "^8.1.5",
+        "@capacitor/haptics": "^8.0.2",
+        "@capacitor/local-notifications": "^8.3.1",
+        "@capacitor/share": "^8.0.3",
+        "@capacitor/splash-screen": "^8.0.0",
+        "@capacitor/status-bar": "^8.0.0",
+        "@tauri-apps/api": "^2.12.4",
+        "@tauri-apps/plugin-dialog": "^2.8.4",
+        "@tauri-apps/plugin-fs": "^2.7.1",
+        "@tauri-apps/plugin-notification": "^2.6.0",
         "@testing-library/dom": "^10.4.0",
         "@testing-library/jest-dom": "^6.6.3",
         "@testing-library/react": "^16.3.0",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
-        "react-scripts": "5.0.1"
+        "react-scripts": "^0.0.0"
     },
     "scripts": {
         "start": "react-scripts start",
@@ -16,7 +28,19 @@
         "test": "react-scripts test",
         "predeploy": "npm run build",
         "deploy": "gh-pages -d build",
-        "test:ci": "react-scripts test --watchAll=false"
+        "test:ci": "react-scripts test --watchAll=false",
+        "mobile:add:android": "node scripts/native-setup.mjs android",
+        "mobile:add:ios": "node scripts/native-setup.mjs ios",
+        "mobile:sync": "npm run build:native && cap sync",
+        "mobile:android": "npm run build:native && cap sync android && cap open android",
+        "mobile:android:debug": "node scripts/build-android.mjs debug",
+        "mobile:android:release": "node scripts/build-android.mjs release",
+        "mobile:ios": "npm run build:native && cap sync ios && cap open ios",
+        "desktop:dev": "tauri dev",
+        "desktop:build": "tauri build",
+        "desktop:icons": "tauri icon public/logo512.png",
+        "build:native": "node scripts/build-native.mjs",
+        "verify:native": "node scripts/verify-native-setup.mjs"
     },
     "eslintConfig": {
         "extends": [
@@ -37,6 +61,11 @@
         ]
     },
     "devDependencies": {
+        "@capacitor/android": "^8.6.0",
+        "@capacitor/cli": "^8.6.2",
+        "@capacitor/ios": "^8.6.0",
+        "@tauri-apps/cli": "^2.12.2",
         "gh-pages": "^6.3.0"
-    }
+    },
+    "description": "Nawa Arabic productivity app for web, Android, iOS and desktop."
 }

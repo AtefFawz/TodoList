@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { getRuntimePlatform, isCapacitorNative, isTauriDesktop } from "../platform/nativeRuntime";
 
 function isStandaloneMode() {
   return (typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(display-mode: standalone)").matches)
@@ -6,11 +7,19 @@ function isStandaloneMode() {
 }
 
 export default function usePwa() {
+  const native = isCapacitorNative() || isTauriDesktop();
+  const platform = getRuntimePlatform();
   const [installPrompt, setInstallPrompt] = useState(null);
-  const [installed, setInstalled] = useState(isStandaloneMode);
+  const [installed, setInstalled] = useState(() => native || isStandaloneMode());
   const [iosInstallHint, setIosInstallHint] = useState(false);
 
   useEffect(() => {
+    if (native) {
+      setInstalled(true);
+      setIosInstallHint(false);
+      return undefined;
+    }
+
     const onBeforeInstall = (event) => {
       event.preventDefault();
       setInstallPrompt(event);
@@ -23,8 +32,7 @@ export default function usePwa() {
     const userAgent = window.navigator.userAgent || "";
     const isAppleMobile = /iphone|ipad|ipod/i.test(userAgent)
       || (window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
-    const isIos = isAppleMobile && !window.MSStream;
-    setIosInstallHint(isIos && !isStandaloneMode());
+    setIosInstallHint(isAppleMobile && !isStandaloneMode());
 
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
     window.addEventListener("appinstalled", onInstalled);
@@ -32,10 +40,10 @@ export default function usePwa() {
       window.removeEventListener("beforeinstallprompt", onBeforeInstall);
       window.removeEventListener("appinstalled", onInstalled);
     };
-  }, []);
+  }, [native]);
 
   const install = useCallback(async () => {
-    if (!installPrompt) return "unavailable";
+    if (native || !installPrompt) return "unavailable";
     try {
       await installPrompt.prompt();
       const choice = await installPrompt.userChoice;
@@ -46,7 +54,7 @@ export default function usePwa() {
       console.warn("تعذّر بدء تثبيت التطبيق:", error);
       return "error";
     }
-  }, [installPrompt]);
+  }, [installPrompt, native]);
 
-  return { canInstall: Boolean(installPrompt), installed, iosInstallHint, install };
+  return { canInstall: !native && Boolean(installPrompt), installed, iosInstallHint, install, native, platform };
 }
