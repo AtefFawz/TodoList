@@ -27,7 +27,9 @@ test("يرفض المهمة بدون عنوان صالح", () => {
 test("يوحّد صيغ حالة الإكمال القديمة ويحافظ على توافق البيانات", () => {
   expect(normalizeTask({ ...baseTask, Complete: true }).completed).toBe(true);
   expect(normalizeTask({ ...baseTask, complete: true }).completed).toBe(true);
-  expect(normalizeTask({ ...baseTask, completed: false }).completed).toBe(false);
+  expect(normalizeTask({ ...baseTask, completed: false }).completed).toBe(
+    false,
+  );
 });
 
 test("ينشئ معرّفات مختلفة للمهام ذات المعرّف المكرر", () => {
@@ -37,13 +39,21 @@ test("ينشئ معرّفات مختلفة للمهام ذات المعرّف ا
 });
 
 test("يتجاهل تاريخ الإنجاز غير الصحيح والتذكير غير الصحيح", () => {
-  const result = normalizeTask({ ...baseTask, dueDate: "2026-02-31", reminderAt: "not-a-date" });
+  const result = normalizeTask({
+    ...baseTask,
+    dueDate: "2026-02-31",
+    reminderAt: "not-a-date",
+  });
   expect(result.dueDate).toBe("");
   expect(result.reminderAt).toBe("");
 });
 
 test("لا يحتفظ بتذكير لمهمة مكتملة", () => {
-  const result = normalizeTask({ ...baseTask, completed: true, reminderAt: "2026-01-02T10:00:00.000Z" });
+  const result = normalizeTask({
+    ...baseTask,
+    completed: true,
+    reminderAt: "2026-01-02T10:00:00.000Z",
+  });
   expect(result.reminderAt).toBe("");
 });
 
@@ -51,7 +61,13 @@ test("يحسب الإحصائيات الأساسية بشكل متسق", () => {
   const today = localDateString();
   const stats = getTaskStats([
     normalizeTask({ ...baseTask, id: "a", completed: true }),
-    normalizeTask({ ...baseTask, id: "b", completed: false, dueDate: today, reminderAt: "2026-01-02T10:00:00.000Z" }),
+    normalizeTask({
+      ...baseTask,
+      id: "b",
+      completed: false,
+      dueDate: today,
+      reminderAt: "2026-01-02T10:00:00.000Z",
+    }),
   ]);
   expect(stats.total).toBe(2);
   expect(stats.completed).toBe(1);
@@ -63,8 +79,18 @@ test("يحسب الإحصائيات الأساسية بشكل متسق", () => {
 
 test("يطبق البحث والفلترة حسب حالة المهمة", () => {
   const tasks = [
-    normalizeTask({ ...baseTask, id: "a", title: "مراجعة التصميم", completed: false }),
-    normalizeTask({ ...baseTask, id: "b", title: "تسليم التقرير", completed: true }),
+    normalizeTask({
+      ...baseTask,
+      id: "a",
+      title: "مراجعة التصميم",
+      completed: false,
+    }),
+    normalizeTask({
+      ...baseTask,
+      id: "b",
+      title: "تسليم التقرير",
+      completed: true,
+    }),
   ];
   expect(filterTasks(tasks, "all", "التصميم", "active", "")).toHaveLength(1);
   expect(filterTasks(tasks, "all", "", "completed", "")[0].id).toBe("b");
@@ -77,7 +103,6 @@ test("يحوّل موعد التذكير بين القيمة المحلية وIS
   expect(toDateTimeLocalValue(isoValue)).toBe(localValue);
 });
 
-
 test("يعرض المهمة في اليوم المحدد بالتذكير عندما لا يوجد موعد إنجاز", () => {
   const reminderDate = new Date();
   reminderDate.setHours(18, 0, 0, 0);
@@ -88,5 +113,22 @@ test("يعرض المهمة في اليوم المحدد بالتذكير عند
     reminderAt: reminderDate.toISOString(),
   });
   expect(filterTasks([task], "today", "", "all", "")).toHaveLength(1);
+  expect(getTaskStats([task]).dueToday).toBe(1);
+});
+
+test("shows a task today when its reminder is due today even if its deadline is later", () => {
+  const reminderToday = new Date();
+  reminderToday.setHours(18, 0, 0, 0);
+  const later = new Date();
+  later.setDate(later.getDate() + 3);
+  const task = normalizeTask({
+    ...baseTask,
+    id: "deadline-later-reminder-today",
+    dueDate: localDateString(later),
+    reminderAt: reminderToday.toISOString(),
+  });
+
+  expect(filterTasks([task], "today", "", "all", "")).toHaveLength(1);
+  expect(filterTasks([task], "upcoming", "", "all", "")).toHaveLength(0);
   expect(getTaskStats([task]).dueToday).toBe(1);
 });

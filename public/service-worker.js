@@ -1,6 +1,6 @@
 /* Nawa service worker: installable app shell, offline assets and notification interactions. */
 const CACHE_PREFIX = "nawa-shell-";
-const CACHE_NAME = `${CACHE_PREFIX}v5`;
+const CACHE_NAME = `${CACHE_PREFIX}v6`;
 const APP_ROOT = new URL("./", self.registration.scope).href;
 
 async function cacheResponse(cache, url) {

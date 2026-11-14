@@ -1,6 +1,6 @@
 [package]
 name = "nawa"
-version = "4.0.0"
+version = "5.1.0"
 description = "Nawa Arabic productivity and task manager"
 authors = ["Atef Fawzy"]
 edition = "2021"

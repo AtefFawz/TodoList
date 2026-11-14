@@ -3,8 +3,11 @@ import { collectDueReminders } from "../utils/reminderUtils";
 import {
   addNativeNotificationActionListener,
   getNotificationPermission,
+  getExactAlarmPermission,
+  getRuntimePlatform,
   isCapacitorNative,
   requestPlatformNotificationPermission,
+  requestExactAlarmPermission,
   showPlatformNotification,
   syncNativeReminders,
   triggerHaptics,
@@ -32,7 +35,10 @@ function safeRead(key, fallback) {
 
 function readSettings() {
   const stored = safeRead(SETTINGS_KEY, {});
-  const values = stored && typeof stored === "object" && !Array.isArray(stored) ? stored : {};
+  const values =
+    stored && typeof stored === "object" && !Array.isArray(stored)
+      ? stored
+      : {};
   return {
     inAppEnabled: values.inAppEnabled !== false,
     systemEnabled: values.systemEnabled === true,
@@ -42,32 +48,51 @@ function readSettings() {
 
 function readDelivered() {
   const value = safeRead(DELIVERED_KEY, {});
-  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value
+    : {};
 }
 
 function readNotificationHistory() {
   const value = safeRead(NOTIFICATIONS_KEY, []);
-  return Array.isArray(value) ? value.filter((item) => item && typeof item.id === "string").slice(0, MAX_NOTIFICATIONS) : [];
+  return Array.isArray(value)
+    ? value
+        .filter((item) => item && typeof item.id === "string")
+        .slice(0, MAX_NOTIFICATIONS)
+    : [];
 }
 
 function getInitialPermission() {
   if (isCapacitorNative()) return "default";
-  return typeof window !== "undefined" && "Notification" in window ? window.Notification.permission : "unsupported";
+  return typeof window !== "undefined" && "Notification" in window
+    ? window.Notification.permission
+    : "unsupported";
 }
 
 export default function useNotifications(tasks) {
   const [notifications, setNotifications] = useState(readNotificationHistory);
   const [settings, setSettings] = useState(readSettings);
   const [permission, setPermission] = useState(getInitialPermission);
+  const [exactAlarmPermission, setExactAlarmPermission] = useState(() =>
+    getRuntimePlatform() === "android" ? "default" : "not-required",
+  );
   const deliveredRef = useRef(readDelivered());
 
-  const unreadCount = useMemo(() => notifications.filter((item) => !item.read).length, [notifications]);
+  const unreadCount = useMemo(
+    () => notifications.filter((item) => !item.read).length,
+    [notifications],
+  );
 
   useEffect(() => {
     let mounted = true;
     const syncPermission = async () => {
-      const nextPermission = await getNotificationPermission();
-      if (mounted) setPermission(nextPermission);
+      const [nextPermission, nextExactAlarmPermission] = await Promise.all([
+        getNotificationPermission(),
+        getExactAlarmPermission(),
+      ]);
+      if (!mounted) return;
+      setPermission(nextPermission);
+      setExactAlarmPermission(nextExactAlarmPermission);
     };
     syncPermission();
     window.addEventListener("focus", syncPermission);
@@ -81,7 +106,10 @@ export default function useNotifications(tasks) {
 
   useEffect(() => {
     try {
-      window.localStorage.setItem(NOTIFICATIONS_KEY, JSON.stringify(notifications.slice(0, MAX_NOTIFICATIONS)));
+      window.localStorage.setItem(
+        NOTIFICATIONS_KEY,
+        JSON.stringify(notifications.slice(0, MAX_NOTIFICATIONS)),
+      );
     } catch (error) {
       console.warn("تعذّر حفظ سجل التنبيهات:", error);
     }
@@ -95,23 +123,37 @@ export default function useNotifications(tasks) {
     }
   }, [settings]);
 
-  const showSystemNotification = useCallback(async (task) => showPlatformNotification({
-    title: task.isTest ? "إشعارات نَواة تعمل بنجاح" : "تذكير من نَواة",
-    body: task.isTest ? "تم الاتصال بنظام إشعارات جهازك بنجاح." : `حان وقت: ${task.title}`,
-    taskId: task.isTest ? "" : task.id,
-    vibrate: settings.vibrate,
-    isTest: Boolean(task.isTest),
-  }), [settings.vibrate]);
+  const showSystemNotification = useCallback(
+    async (task) =>
+      showPlatformNotification({
+        title: task.isTest ? "إشعارات نَواة تعمل بنجاح" : "تذكير من نَواة",
+        body: task.isTest
+          ? "تم الاتصال بنظام إشعارات جهازك بنجاح."
+          : `حان وقت: ${task.title}`,
+        taskId: task.isTest ? "" : task.id,
+        vibrate: settings.vibrate,
+        isTest: Boolean(task.isTest),
+      }),
+    [settings.vibrate],
+  );
 
   const sendTestNotification = useCallback(async () => {
     if (permission !== "granted") return false;
-    return showSystemNotification({ id: "nawa-test-notification", title: "اختبار", isTest: true });
+    return showSystemNotification({
+      id: "nawa-test-notification",
+      title: "اختبار",
+      isTest: true,
+    });
   }, [permission, showSystemNotification]);
 
   // Native mobile reminders are scheduled by the operating system, not by a JS timer.
   useEffect(() => {
     if (!isCapacitorNative()) return undefined;
-    syncNativeReminders(tasks, settings.systemEnabled && permission === "granted", settings.vibrate);
+    syncNativeReminders(
+      tasks,
+      settings.systemEnabled && permission === "granted",
+      settings.vibrate,
+    );
     return undefined;
   }, [tasks, settings.systemEnabled, settings.vibrate, permission]);
 
@@ -120,12 +162,22 @@ export default function useNotifications(tasks) {
     if (!isCapacitorNative()) return undefined;
     let active = true;
     let listener = null;
-    import("@capacitor/app").then(({ App: NativeApp }) => NativeApp.addListener("appStateChange", ({ isActive }) => {
-      if (isActive) syncNativeReminders(tasks, settings.systemEnabled && permission === "granted", settings.vibrate);
-    })).then((createdListener) => {
-      listener = createdListener;
-      if (!active) listener?.remove();
-    }).catch((error) => console.warn("تعذّر متابعة حالة التطبيق:", error));
+    import("@capacitor/app")
+      .then(({ App: NativeApp }) =>
+        NativeApp.addListener("appStateChange", ({ isActive }) => {
+          if (isActive)
+            syncNativeReminders(
+              tasks,
+              settings.systemEnabled && permission === "granted",
+              settings.vibrate,
+            );
+        }),
+      )
+      .then((createdListener) => {
+        listener = createdListener;
+        if (!active) listener?.remove();
+      })
+      .catch((error) => console.warn("تعذّر متابعة حالة التطبيق:", error));
     return () => {
       active = false;
       listener?.remove();
@@ -137,7 +189,10 @@ export default function useNotifications(tasks) {
     let active = true;
     let listener = null;
     addNativeNotificationActionListener((taskId) => {
-      if (active) window.dispatchEvent(new CustomEvent("nawa-open-task", { detail: { taskId } }));
+      if (active)
+        window.dispatchEvent(
+          new CustomEvent("nawa-open-task", { detail: { taskId } }),
+        );
     }).then((createdListener) => {
       listener = createdListener;
       if (!active) listener?.remove();
@@ -152,12 +207,20 @@ export default function useNotifications(tasks) {
   const requestPermission = useCallback(async () => {
     const result = await requestPlatformNotificationPermission();
     setPermission(result);
-    if (result === "granted") setSettings((current) => ({ ...current, systemEnabled: true }));
+    if (result === "granted")
+      setSettings((current) => ({ ...current, systemEnabled: true }));
+    return result;
+  }, []);
+
+  const requestExactAlarm = useCallback(async () => {
+    const result = await requestExactAlarmPermission();
+    setExactAlarmPermission(result);
     return result;
   }, []);
 
   useEffect(() => {
-    const systemNotificationsEnabled = settings.systemEnabled && permission === "granted";
+    const systemNotificationsEnabled =
+      settings.systemEnabled && permission === "granted";
     if (!settings.inAppEnabled && !systemNotificationsEnabled) return undefined;
 
     const nativeMobile = isCapacitorNative();
@@ -169,8 +232,14 @@ export default function useNotifications(tasks) {
       const dueTasks = result.dueTasks;
       deliveredRef.current = result.delivered;
       if (result.changed) {
-        try { window.localStorage.setItem(DELIVERED_KEY, JSON.stringify(result.delivered)); }
-        catch (error) { console.warn("تعذّر حفظ حالة التذكيرات:", error); }
+        try {
+          window.localStorage.setItem(
+            DELIVERED_KEY,
+            JSON.stringify(result.delivered),
+          );
+        } catch (error) {
+          console.warn("تعذّر حفظ حالة التذكيرات:", error);
+        }
       }
 
       dueTasks.forEach((task) => {
@@ -185,17 +254,25 @@ export default function useNotifications(tasks) {
           read: false,
         };
         if (settings.inAppEnabled) {
-          setNotifications((current) => current.some((entry) => entry.id === id) ? current : [item, ...current].slice(0, MAX_NOTIFICATIONS));
+          setNotifications((current) =>
+            current.some((entry) => entry.id === id)
+              ? current
+              : [item, ...current].slice(0, MAX_NOTIFICATIONS),
+          );
         }
         // Android/iOS already own scheduled reminders. Other runtimes notify when due.
-        if (systemNotificationsEnabled && !nativeMobile) showSystemNotification(task);
-        if (settings.vibrate) triggerHaptics();
+        if (systemNotificationsEnabled && !nativeMobile)
+          showSystemNotification(task);
+        // Native Android notification channels already handle vibration; avoid a second haptic pulse.
+        if (settings.vibrate && !nativeMobile) triggerHaptics();
       });
     };
 
     scanReminders();
     const interval = window.setInterval(scanReminders, 15000);
-    const onVisibility = () => { if (document.visibilityState === "visible") scanReminders(); };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") scanReminders();
+    };
     window.addEventListener("focus", scanReminders);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
@@ -203,22 +280,37 @@ export default function useNotifications(tasks) {
       window.removeEventListener("focus", scanReminders);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, [tasks, settings.inAppEnabled, settings.systemEnabled, settings.vibrate, permission, showSystemNotification]);
+  }, [
+    tasks,
+    settings.inAppEnabled,
+    settings.systemEnabled,
+    settings.vibrate,
+    permission,
+    showSystemNotification,
+  ]);
 
   const updateSettings = useCallback((patch) => {
     setSettings((current) => ({ ...current, ...patch }));
   }, []);
 
   const markRead = useCallback((id) => {
-    setNotifications((current) => current.map((item) => item.id === id ? { ...item, read: true } : item));
+    setNotifications((current) =>
+      current.map((item) => (item.id === id ? { ...item, read: true } : item)),
+    );
   }, []);
 
   const markAllRead = useCallback(() => {
-    setNotifications((current) => current.map((item) => ({ ...item, read: true })));
+    setNotifications((current) =>
+      current.map((item) => ({ ...item, read: true })),
+    );
   }, []);
 
   const markTaskRead = useCallback((taskId) => {
-    setNotifications((current) => current.map((item) => item.taskId === taskId ? { ...item, read: true } : item));
+    setNotifications((current) =>
+      current.map((item) =>
+        item.taskId === taskId ? { ...item, read: true } : item,
+      ),
+    );
   }, []);
 
   const dismiss = useCallback((id) => {
@@ -230,7 +322,9 @@ export default function useNotifications(tasks) {
     unreadCount,
     settings,
     permission,
+    exactAlarmPermission,
     requestPermission,
+    requestExactAlarm,
     sendTestNotification,
     updateSettings,
     markRead,

@@ -1,16 +1,26 @@
 import { useCallback, useEffect, useState } from "react";
-import { getRuntimePlatform, isCapacitorNative, isTauriDesktop } from "../platform/nativeRuntime";
+import {
+  getRuntimePlatform,
+  isCapacitorNative,
+  isTauriDesktop,
+} from "../platform/nativeRuntime";
 
 function isStandaloneMode() {
-  return (typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(display-mode: standalone)").matches)
-    || (typeof navigator !== "undefined" && navigator.standalone === true);
+  return (
+    (typeof window !== "undefined" &&
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(display-mode: standalone)").matches) ||
+    (typeof navigator !== "undefined" && navigator.standalone === true)
+  );
 }
 
 export default function usePwa() {
   const native = isCapacitorNative() || isTauriDesktop();
   const platform = getRuntimePlatform();
   const [installPrompt, setInstallPrompt] = useState(null);
-  const [installed, setInstalled] = useState(() => native || isStandaloneMode());
+  const [installed, setInstalled] = useState(
+    () => native || isStandaloneMode(),
+  );
   const [iosInstallHint, setIosInstallHint] = useState(false);
 
   useEffect(() => {
@@ -30,8 +40,10 @@ export default function usePwa() {
     };
 
     const userAgent = window.navigator.userAgent || "";
-    const isAppleMobile = /iphone|ipad|ipod/i.test(userAgent)
-      || (window.navigator.platform === "MacIntel" && window.navigator.maxTouchPoints > 1);
+    const isAppleMobile =
+      /iphone|ipad|ipod/i.test(userAgent) ||
+      (window.navigator.platform === "MacIntel" &&
+        window.navigator.maxTouchPoints > 1);
     setIosInstallHint(isAppleMobile && !isStandaloneMode());
 
     window.addEventListener("beforeinstallprompt", onBeforeInstall);
@@ -56,5 +68,12 @@ export default function usePwa() {
     }
   }, [installPrompt, native]);
 
-  return { canInstall: !native && Boolean(installPrompt), installed, iosInstallHint, install, native, platform };
+  return {
+    canInstall: !native && Boolean(installPrompt),
+    installed,
+    iosInstallHint,
+    install,
+    native,
+    platform,
+  };
 }

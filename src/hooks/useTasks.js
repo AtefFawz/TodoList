@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
-import { createId, normalizeTask, normalizeTaskList, readTasks, saveTasks, STORAGE_KEY } from "../utils/taskUtils";
+import {
+  createId,
+  normalizeTask,
+  normalizeTaskList,
+  readTasks,
+  saveTasks,
+  STORAGE_KEY,
+} from "../utils/taskUtils";
 
 export default function useTasks() {
   const [tasks, setTasks] = useState(readTasks);
@@ -15,7 +22,11 @@ export default function useTasks() {
       try {
         const incoming = normalizeTaskList(JSON.parse(event.newValue));
         if (incoming) {
-          setTasks((current) => JSON.stringify(current) === JSON.stringify(incoming) ? current : incoming);
+          setTasks((current) =>
+            JSON.stringify(current) === JSON.stringify(incoming)
+              ? current
+              : incoming,
+          );
         }
       } catch (error) {
         console.warn("تعذّر مزامنة المهام من علامة تبويب أخرى:", error);
@@ -27,62 +38,95 @@ export default function useTasks() {
 
   const addTask = useCallback((values) => {
     const now = new Date().toISOString();
-    const task = normalizeTask({ ...values, id: createId(), completed: false, createdAt: now, updatedAt: now });
+    const task = normalizeTask({
+      ...values,
+      id: createId(),
+      completed: false,
+      createdAt: now,
+      updatedAt: now,
+    });
     if (!task) return false;
     setTasks((current) => [task, ...current]);
     return task;
   }, []);
 
   const updateTask = useCallback((id, values) => {
-    setTasks((current) => current.map((task) => {
-      if (task.id !== id) return task;
-      const nextTask = normalizeTask({ ...task, ...values, updatedAt: new Date().toISOString() });
-      return nextTask || task;
-    }));
+    setTasks((current) =>
+      current.map((task) => {
+        if (task.id !== id) return task;
+        const nextTask = normalizeTask({
+          ...task,
+          ...values,
+          updatedAt: new Date().toISOString(),
+        });
+        return nextTask || task;
+      }),
+    );
   }, []);
 
   const toggleTask = useCallback((id) => {
-    setTasks((current) => current.map((task) => {
-      if (task.id !== id) return task;
-      const completed = !task.completed;
-      return {
-        ...task,
-        completed,
-        reminderAt: completed ? "" : task.reminderAt,
-        completedAt: completed ? new Date().toISOString() : null,
-        updatedAt: new Date().toISOString(),
-      };
-    }));
+    setTasks((current) =>
+      current.map((task) => {
+        if (task.id !== id) return task;
+        const completed = !task.completed;
+        return {
+          ...task,
+          completed,
+          reminderAt: completed ? "" : task.reminderAt,
+          completedAt: completed ? new Date().toISOString() : null,
+          updatedAt: new Date().toISOString(),
+        };
+      }),
+    );
   }, []);
 
-  const deleteTask = useCallback((id) => setTasks((current) => current.filter((task) => task.id !== id)), []);
+  const deleteTask = useCallback(
+    (id) => setTasks((current) => current.filter((task) => task.id !== id)),
+    [],
+  );
 
-  const duplicateTask = useCallback((id) => {
-    const original = tasks.find((task) => task.id === id);
-    if (!original) return null;
-    const now = new Date().toISOString();
-    const duplicate = normalizeTask({
-      ...original,
-      id: createId(),
-      title: `${original.title} (نسخة)`,
-      completed: false,
-      completedAt: null,
-      reminderAt: "",
-      createdAt: now,
-      updatedAt: now,
-    });
-    if (duplicate) setTasks((current) => [duplicate, ...current]);
-    return duplicate;
-  }, [tasks]);
+  const duplicateTask = useCallback(
+    (id) => {
+      const original = tasks.find((task) => task.id === id);
+      if (!original) return null;
+      const now = new Date().toISOString();
+      const duplicate = normalizeTask({
+        ...original,
+        id: createId(),
+        title: `${original.title} (نسخة)`,
+        completed: false,
+        completedAt: null,
+        reminderAt: "",
+        createdAt: now,
+        updatedAt: now,
+      });
+      if (duplicate) setTasks((current) => [duplicate, ...current]);
+      return duplicate;
+    },
+    [tasks],
+  );
 
-  const clearCompleted = useCallback(() => setTasks((current) => current.filter((task) => !task.completed)), []);
+  const clearCompleted = useCallback(
+    () => setTasks((current) => current.filter((task) => !task.completed)),
+    [],
+  );
 
   const replaceTasks = useCallback((incoming) => {
     const normalized = normalizeTaskList(incoming);
-    if (!normalized || (incoming.length > 0 && normalized.length === 0)) return false;
+    if (!normalized || (incoming.length > 0 && normalized.length === 0))
+      return false;
     setTasks(normalized);
     return normalized.length;
   }, []);
 
-  return { tasks, addTask, updateTask, toggleTask, deleteTask, duplicateTask, clearCompleted, replaceTasks };
+  return {
+    tasks,
+    addTask,
+    updateTask,
+    toggleTask,
+    deleteTask,
+    duplicateTask,
+    clearCompleted,
+    replaceTasks,
+  };
 }

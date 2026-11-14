@@ -10,7 +10,7 @@ if (!rootElement) throw new Error("Root element was not found.");
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 registerServiceWorker();

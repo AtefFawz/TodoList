@@ -1,27 +1,27 @@
 @font-face {
   font-family: "Alexandria";
-  src: url("../public/Font/Alexandria-Regular.ttf") format("truetype");
+  src: url("./assets/fonts/Alexandria-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Alexandria";
-  src: url("../public/Font/Alexandria-Medium.ttf") format("truetype");
+  src: url("./assets/fonts/Alexandria-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Alexandria";
-  src: url("../public/Font/Alexandria-SemiBold.ttf") format("truetype");
+  src: url("./assets/fonts/Alexandria-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: "Alexandria";
-  src: url("../public/Font/Alexandria-Bold.ttf") format("truetype");
+  src: url("./assets/fonts/Alexandria-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -37,10 +37,34 @@
   font-weight: 400;
 }
 
-* { box-sizing: border-box; }
-html { min-width: 320px; scroll-behavior: smooth; }
-body { margin: 0; min-width: 320px; min-height: 100vh; }
-button, input, textarea, select { font: inherit; }
-button { cursor: pointer; }
-button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 34%, transparent); outline-offset: 2px; }
-::selection { background: rgba(124, 108, 242, .2); }
+* {
+  box-sizing: border-box;
+}
+html {
+  min-width: 320px;
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 34%, transparent);
+  outline-offset: 2px;
+}
+::selection {
+  background: rgba(124, 108, 242, 0.2);
+}

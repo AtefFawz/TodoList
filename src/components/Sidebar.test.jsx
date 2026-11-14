@@ -1,22 +1,23 @@
+import { vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import Sidebar from "./Sidebar";
 
 const baseProps = {
   view: "all",
-  onNavigate: jest.fn(),
+  onNavigate: vi.fn(),
   stats: { total: 4, dueToday: 1, overdue: 2, completed: 1 },
   categories: [
     { label: "العمل", color: "#7668e8" },
     { label: "شخصي", color: "#e3a34c" },
   ],
   selectedCategory: "",
-  onSelectCategory: jest.fn(),
-  onAdd: jest.fn(),
-  onExport: jest.fn(),
-  onImport: jest.fn(),
-  onSettings: jest.fn(),
+  onSelectCategory: vi.fn(),
+  onAdd: vi.fn(),
+  onExport: vi.fn(),
+  onImport: vi.fn(),
+  onSettings: vi.fn(),
   mobileOpen: false,
-  onClose: jest.fn(),
+  onClose: vi.fn(),
 };
 
 beforeEach(() => {
@@ -71,11 +72,6 @@ test("sidebar utility actions are connected and close the mobile drawer", () => 
 test("the active destination and selected category expose accessible state", () => {
   render(<Sidebar {...baseProps} view="today" selectedCategory="العمل" />);
 
-  expect(
-    screen.getByRole("button", { name: /مهام اليوم/ }),
-  ).not.toHaveAttribute("aria-current", "page");
-  expect(screen.getByRole("button", { name: "العمل" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  expect(screen.getByRole("button", { name: /مهام اليوم/ })).not.toHaveAttribute("aria-current", "page");
+  expect(screen.getByRole("button", { name: "العمل" })).toHaveAttribute("aria-pressed", "true");
 });

@@ -1,5 +1,8 @@
 import { Capacitor } from "@capacitor/core";
-import { buildNativeReminderNotifications, stableNotificationId } from "../utils/nativeReminderUtils";
+import {
+  buildNativeReminderNotifications,
+  stableNotificationId,
+} from "../utils/nativeReminderUtils";
 
 const REMINDER_CHANNEL_ID = "nawa-task-reminders";
 let nativeReminderSyncQueue = Promise.resolve();
@@ -28,20 +31,54 @@ function mapPermission(value) {
   return "default";
 }
 
+export async function getExactAlarmPermission() {
+  if (!isCapacitorNative() || Capacitor.getPlatform() !== "android")
+    return "not-required";
+  try {
+    const LocalNotifications = await getLocalNotifications();
+    if (typeof LocalNotifications.checkExactNotificationSetting !== "function")
+      return "unsupported";
+    const result = await LocalNotifications.checkExactNotificationSetting();
+    return mapPermission(result.exact_alarm);
+  } catch (error) {
+    console.warn("تعذّر فحص صلاحية التنبيهات الدقيقة:", error);
+    return "error";
+  }
+}
+
+export async function requestExactAlarmPermission() {
+  if (!isCapacitorNative() || Capacitor.getPlatform() !== "android")
+    return "not-required";
+  try {
+    const LocalNotifications = await getLocalNotifications();
+    if (typeof LocalNotifications.changeExactNotificationSetting !== "function")
+      return "unsupported";
+    const result = await LocalNotifications.changeExactNotificationSetting();
+    return mapPermission(result.exact_alarm);
+  } catch (error) {
+    console.warn("تعذّر فتح إعدادات التنبيهات الدقيقة:", error);
+    return "error";
+  }
+}
+
 export async function getNotificationPermission() {
   try {
     if (isCapacitorNative()) {
-      const { LocalNotifications } = await import("@capacitor/local-notifications");
+      const { LocalNotifications } =
+        await import("@capacitor/local-notifications");
       const result = await LocalNotifications.checkPermissions();
       return mapPermission(result.display);
     }
 
     if (isTauriDesktop()) {
-      const { isPermissionGranted } = await import("@tauri-apps/plugin-notification");
+      const { isPermissionGranted } =
+        await import("@tauri-apps/plugin-notification");
       return (await isPermissionGranted()) ? "granted" : "default";
     }
 
-    return "Notification" in window ? mapPermission(window.Notification.permission) : "unsupported";
+    return "Notification" in window
+      ? mapPermission(window.Notification.permission)
+      : "unsupported";
   } catch (error) {
     console.warn("تعذّر قراءة إذن الإشعارات:", error);
     return "default";
@@ -51,13 +88,15 @@ export async function getNotificationPermission() {
 export async function requestPlatformNotificationPermission() {
   try {
     if (isCapacitorNative()) {
-      const { LocalNotifications } = await import("@capacitor/local-notifications");
+      const { LocalNotifications } =
+        await import("@capacitor/local-notifications");
       const result = await LocalNotifications.requestPermissions();
       return mapPermission(result.display);
     }
 
     if (isTauriDesktop()) {
-      const { isPermissionGranted, requestPermission } = await import("@tauri-apps/plugin-notification");
+      const { isPermissionGranted, requestPermission } =
+        await import("@tauri-apps/plugin-notification");
       if (await isPermissionGranted()) return "granted";
       return mapPermission(await requestPermission());
     }
@@ -70,7 +109,6 @@ export async function requestPlatformNotificationPermission() {
   }
 }
 
-
 async function getLocalNotifications() {
   const { LocalNotifications } = await import("@capacitor/local-notifications");
   return LocalNotifications;
@@ -79,14 +117,18 @@ async function getLocalNotifications() {
 async function syncNativeRemindersNow(tasks, enabled, vibrate) {
   try {
     const LocalNotifications = await getLocalNotifications();
-    const channelId = vibrate ? `${REMINDER_CHANNEL_ID}-vibrate` : `${REMINDER_CHANNEL_ID}-silent`;
+    const channelId = vibrate
+      ? `${REMINDER_CHANNEL_ID}-vibrate`
+      : `${REMINDER_CHANNEL_ID}-silent`;
     if (Capacitor.getPlatform() === "android") {
       await LocalNotifications.createChannel({
         id: channelId,
-        name: vibrate ? "تذكيرات المهام مع الاهتزاز" : "تذكيرات المهام بدون اهتزاز",
+        name: vibrate
+          ? "تذكيرات المهام مع الاهتزاز"
+          : "تذكيرات المهام بدون اهتزاز",
         description: "تنبيهات المواعيد التي حددتها لمهامك في نَواة",
         importance: 4,
-        vibration,
+        vibration: vibrate,
       });
     }
 
@@ -94,15 +136,22 @@ async function syncNativeRemindersNow(tasks, enabled, vibrate) {
     const ownedIds = (pending.notifications || [])
       .filter((item) => item.extra?.nawa === "task-reminder")
       .map((item) => ({ id: item.id }));
-    if (ownedIds.length) await LocalNotifications.cancel({ notifications: ownedIds });
+    if (ownedIds.length)
+      await LocalNotifications.cancel({ notifications: ownedIds });
 
     if (!enabled) return { scheduled: 0, skipped: false };
 
-    const notifications = buildNativeReminderNotifications(tasks, Date.now(), vibrate);
+    const notifications = buildNativeReminderNotifications(
+      tasks,
+      Date.now(),
+      vibrate,
+      Capacitor.getPlatform(),
+    );
     if (notifications.length) {
       const result = await LocalNotifications.schedule({ notifications });
       const warnings = Array.isArray(result?.warnings) ? result.warnings : [];
-      if (warnings.length) console.info("بعض تذكيرات نَواة قد تعمل بتوقيت تقريبي:", warnings);
+      if (warnings.length)
+        console.info("بعض تذكيرات نَواة قد تعمل بتوقيت تقريبي:", warnings);
     }
     return { scheduled: notifications.length, skipped: false };
   } catch (error) {
@@ -112,7 +161,8 @@ async function syncNativeRemindersNow(tasks, enabled, vibrate) {
 }
 
 export function syncNativeReminders(tasks, enabled, vibrate = true) {
-  if (!isCapacitorNative()) return Promise.resolve({ scheduled: 0, skipped: true });
+  if (!isCapacitorNative())
+    return Promise.resolve({ scheduled: 0, skipped: true });
   // Serialize updates so rapid edits cannot let an older reminder snapshot win the race.
   nativeReminderSyncQueue = nativeReminderSyncQueue
     .catch(() => undefined)
@@ -120,49 +170,69 @@ export function syncNativeReminders(tasks, enabled, vibrate = true) {
   return nativeReminderSyncQueue;
 }
 
-export async function showPlatformNotification({ title, body, taskId = "", vibrate = true, isTest = false }) {
+export async function showPlatformNotification({
+  title,
+  body,
+  taskId = "",
+  vibrate = true,
+  isTest = false,
+}) {
   try {
     if (isCapacitorNative()) {
       const LocalNotifications = await getLocalNotifications();
-      const channelId = vibrate ? `${REMINDER_CHANNEL_ID}-vibrate` : `${REMINDER_CHANNEL_ID}-silent`;
+      const channelId = vibrate
+        ? `${REMINDER_CHANNEL_ID}-vibrate`
+        : `${REMINDER_CHANNEL_ID}-silent`;
       if (Capacitor.getPlatform() === "android") {
         await LocalNotifications.createChannel({
           id: channelId,
           name: vibrate ? "إشعار فوري مع الاهتزاز" : "إشعار فوري بدون اهتزاز",
           description: "إشعارات من تطبيق نَواة",
           importance: 4,
-          vibration,
+          vibration: vibrate,
         });
       }
-      const notificationId = stableNotificationId(isTest ? `test-${Date.now()}` : `instant-${taskId}-${Date.now()}`);
+      const notificationId = stableNotificationId(
+        isTest ? `test-${Date.now()}` : `instant-${taskId}-${Date.now()}`,
+      );
       await LocalNotifications.schedule({
-        notifications: [{
-          id: notificationId,
-          title,
-          body,
-          schedule: { at: new Date(Date.now() + 350), allowWhileIdle: true },
-          foreground: true,
-          channelId,
-          smallIcon: "ic_stat_nawa",
-          iconColor: "#7668e8",
-          extra: { nawa: "instant", taskId },
-        }],
+        notifications: [
+          {
+            id: notificationId,
+            title,
+            body,
+            schedule: { at: new Date(Date.now() + 350), allowWhileIdle: true },
+            ...(Capacitor.getPlatform() === "android"
+              ? {
+                  channelId,
+                  smallIcon: "ic_stat_nawa",
+                  iconColor: "#7668e8",
+                }
+              : {}),
+            extra: { nawa: "instant", taskId },
+          },
+        ],
       });
       if (vibrate) await triggerHaptics();
       return true;
     }
 
     if (isTauriDesktop()) {
-      const { sendNotification } = await import("@tauri-apps/plugin-notification");
+      const { sendNotification } =
+        await import("@tauri-apps/plugin-notification");
       sendNotification({ title, body });
       return true;
     }
 
-    if (!("Notification" in window) || window.Notification.permission !== "granted") return false;
+    if (
+      !("Notification" in window) ||
+      window.Notification.permission !== "granted"
+    )
+      return false;
     const options = {
       body,
-      icon: `${process.env.PUBLIC_URL || ""}/logo192.png`,
-      badge: `${process.env.PUBLIC_URL || ""}/logo192.png`,
+      icon: `${import.meta.env.BASE_URL}logo192.png`,
+      badge: `${import.meta.env.BASE_URL}logo192.png`,
       tag: `nawa-${isTest ? "test" : "reminder"}-${taskId || Date.now()}`,
       renotify: false,
       data: { taskId },
@@ -170,7 +240,10 @@ export async function showPlatformNotification({ title, body, taskId = "", vibra
 
     if ("serviceWorker" in navigator) {
       const registration = await navigator.serviceWorker.getRegistration();
-      if (registration?.active && typeof registration.showNotification === "function") {
+      if (
+        registration?.active &&
+        typeof registration.showNotification === "function"
+      ) {
         await registration.showNotification(title, options);
         return true;
       }
@@ -196,10 +269,13 @@ export async function addNativeNotificationActionListener(onTaskOpen) {
   if (!isCapacitorNative()) return null;
   try {
     const LocalNotifications = await getLocalNotifications();
-    return await LocalNotifications.addListener("localNotificationActionPerformed", (event) => {
-      const taskId = event?.notification?.extra?.taskId;
-      if (taskId) onTaskOpen(taskId);
-    });
+    return await LocalNotifications.addListener(
+      "localNotificationActionPerformed",
+      (event) => {
+        const taskId = event?.notification?.extra?.taskId;
+        if (taskId) onTaskOpen(taskId);
+      },
+    );
   } catch (error) {
     console.warn("تعذّر ربط الضغط على إشعار الجهاز:", error);
     return null;
@@ -213,7 +289,8 @@ export async function triggerHaptics() {
       await Haptics.impact({ style: ImpactStyle.Medium });
       return true;
     }
-    if (typeof navigator !== "undefined" && navigator.vibrate) return navigator.vibrate([100, 50, 100]);
+    if (typeof navigator !== "undefined" && navigator.vibrate)
+      return navigator.vibrate([100, 50, 100]);
   } catch (error) {
     console.info("الاهتزاز غير متاح على هذا الجهاز:", error);
   }
@@ -243,10 +320,11 @@ export async function pickBackupFile() {
 export async function saveBackupFile(filename, contents) {
   if (isCapacitorNative()) {
     try {
-      const [{ Filesystem, Directory, Encoding }, { Share }] = await Promise.all([
-        import("@capacitor/filesystem"),
-        import("@capacitor/share"),
-      ]);
+      const [{ Filesystem, Directory, Encoding }, { Share }] =
+        await Promise.all([
+          import("@capacitor/filesystem"),
+          import("@capacitor/share"),
+        ]);
       const file = await Filesystem.writeFile({
         path: filename,
         data: contents,
@@ -255,7 +333,7 @@ export async function saveBackupFile(filename, contents) {
       });
       await Share.share({
         title: "نسخة احتياطية من نَواة",
-        text: "احتفظ بنسخة من مهامك وإعداداتك.",
+        text: "احتفظ بنسخة احتياطية من مهامك.",
         url: file.uri,
         dialogTitle: "تصدير النسخة الاحتياطية",
       });
@@ -285,7 +363,7 @@ export async function saveBackupFile(filename, contents) {
     }
   }
 
-  const blob = new Blob([contents], { type: "application/json" });
+  const blob = new Blob([contents], { type: "application/json;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
