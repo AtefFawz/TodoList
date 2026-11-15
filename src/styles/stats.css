@@ -1,0 +1,128 @@
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+.card {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 18px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+.card--hero {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface));
+}
+.card--wide {
+  grid-column: 1 / -1;
+}
+.card__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.card__label svg {
+  width: 15px;
+  height: 15px;
+}
+.card__big {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.ring {
+  width: 104px;
+  height: 104px;
+}
+.ring__track {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 9;
+}
+.ring__value {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 9;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.5s var(--ease);
+}
+.ring__text {
+  fill: var(--ink);
+  font-size: 26px;
+  font-weight: 800;
+}
+.bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: end;
+  gap: 10px;
+  height: 180px;
+  margin-block-start: 12px;
+}
+.bar {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  height: 100%;
+  gap: 4px;
+}
+.bar__fill {
+  align-self: end;
+  width: min(34px, 80%);
+  border-radius: 8px 8px 4px 4px;
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  min-height: 4px;
+}
+.bar.is-today .bar__fill {
+  background: var(--accent-solid);
+  border-color: var(--accent-text);
+}
+.bar__value {
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.bar__label {
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+.hbars {
+  display: grid;
+  gap: 10px;
+  margin-block-start: 6px;
+}
+.hbars > li {
+  display: grid;
+  grid-template-columns: 70px 1fr 28px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+.hbars__track {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+.hbars__track > * {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: var(--accent-solid);
+}
+.hbars__value {
+  text-align: end;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

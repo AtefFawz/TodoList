@@ -3,12 +3,12 @@ import { resolve } from "node:path";
 
 const requiredFiles = [
   "index.html",
-  "vite.config.mjs",
+  "vite.config.ts",
   "capacitor.config.json",
-  "src/platform/nativeRuntime.js",
-  "src/platform/nativeRuntime.test.js",
-  "src/utils/nativeReminderUtils.js",
-  "src/utils/nativeReminderUtils.test.js",
+  "src/platform/runtime.ts",
+  "src/platform/platform.test.ts",
+  "src/platform/native-reminders.ts",
+  "src/core/reminders.ts",
   "src-tauri/tauri.conf.json",
   "src-tauri/Cargo.toml",
   "src-tauri/src/lib.rs",
@@ -52,8 +52,6 @@ const requiredDevDependencies = [
   "@capacitor/ios",
   "@tauri-apps/cli",
   "@vitejs/plugin-react",
-  "@testing-library/dom",
-  "@testing-library/jest-dom",
   "@testing-library/react",
   "vite",
   "vitest",
@@ -81,10 +79,14 @@ if (!capability.permissions.includes("notification:default") || !capability.perm
 
 const tauriCargo = readFileSync("src-tauri/Cargo.toml", "utf8");
 if (!tauriCargo.includes(`version = "${packageJson.version}"`)) throw new Error("package.json and Cargo.toml versions must match.");
-const html = readFileSync("index.html", "utf8");
-const css = readFileSync("src/index.css", "utf8");
-if (css.includes("../public/") || !existsSync("src/assets/fonts/Alexandria-Regular.ttf")) throw new Error("Vite font assets must live under src/assets/fonts and be imported by CSS.");
-if (html.includes("%PUBLIC_URL%") || html.includes("%BASE_URL%/")) throw new Error("index.html contains an incompatible CRA or Vite base URL reference.");
+const viteConfig = readFileSync("vite.config.ts", "utf8");
+if (!viteConfig.includes('outDir: "build"')) throw new Error("Vite must output to ./build for Capacitor, Tauri and Vercel.");
+if (!viteConfig.includes('mode === "native"')) throw new Error("Vite needs a native mode (relative base, no service worker).");
+const fontPackage = packageJson.dependencies?.["@fontsource-variable/alexandria"];
+if (!fontPackage) throw new Error("The Alexandria font package must be a dependency so native builds stay offline.");
+
 if (!existsSync("vercel.json")) throw new Error("Vercel deployment configuration is missing.");
 
-console.log(`Project configuration valid. ${requiredFiles.length} files, ${requiredDependencies.length} runtime dependencies and ${requiredDevDependencies.length} build/test dependencies verified.`);
+console.log(
+  `Project configuration valid. ${requiredFiles.length} files, ${requiredDependencies.length} runtime dependencies and ${requiredDevDependencies.length} build/test dependencies verified.`,
+);

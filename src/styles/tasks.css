@@ -1,0 +1,235 @@
+.composer {
+  margin-block-end: 18px;
+  padding: 6px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+.composer:focus-within {
+  border-color: var(--accent-text);
+}
+.composer__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-inline-start: 10px;
+}
+.composer__icon {
+  width: 20px;
+  height: 20px;
+  color: var(--accent-text);
+}
+.composer__input {
+  flex: 1;
+  min-width: 0;
+  height: 46px;
+  background: none;
+  border: 0;
+  outline: none;
+  font-size: 1rem;
+}
+.composer__preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 10px 8px;
+}
+.composer__hint {
+  padding: 2px 12px 8px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.tasks {
+  display: grid;
+  gap: 8px;
+}
+.group {
+  margin-block-end: 18px;
+}
+.group__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-block-end: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.group__count {
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 0.74rem;
+}
+.group__toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.82rem;
+  margin-block-end: 8px;
+}
+.group__toggle svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s;
+}
+.group__toggle[aria-expanded="true"] svg {
+  transform: rotate(90deg);
+}
+[dir="rtl"] .group__toggle svg {
+  transform: scaleX(-1);
+}
+[dir="rtl"] .group__toggle[aria-expanded="true"] svg {
+  transform: scaleX(-1) rotate(90deg);
+}
+
+.task {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 10px 12px 10px 10px;
+  padding-inline: 10px 12px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-inline-start: 4px solid transparent;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    opacity 0.2s;
+}
+.task:hover {
+  background: var(--surface-hover);
+}
+.task[data-priority="3"] {
+  border-inline-start-color: var(--p3);
+}
+.task[data-priority="2"] {
+  border-inline-start-color: var(--p2);
+}
+.task[data-priority="1"] {
+  border-inline-start-color: var(--p1);
+}
+.task--done {
+  opacity: 0.6;
+}
+.task--done .task__title > span {
+  text-decoration: line-through;
+}
+.task--dragging {
+  box-shadow: var(--shadow);
+  background: var(--surface-hover);
+  z-index: 5;
+}
+.task__handle {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 28px;
+  color: var(--muted);
+  cursor: grab;
+  touch-action: none;
+  opacity: 0.5;
+  border-radius: 6px;
+}
+.task__handle:hover {
+  opacity: 1;
+}
+.task__handle svg {
+  width: 16px;
+  height: 16px;
+}
+.task__check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-block-start: 2px;
+  border-radius: 50%;
+  border: 2px solid var(--muted);
+  color: transparent;
+  transition: all 0.18s var(--ease);
+}
+.task__check svg {
+  width: 15px;
+  height: 15px;
+}
+.task__check:hover {
+  border-color: var(--accent-text);
+  color: var(--accent-text);
+}
+.task__check[aria-checked="true"] {
+  background: var(--success);
+  border-color: var(--success);
+  color: #fff;
+}
+.task__check--small {
+  width: 22px;
+  height: 22px;
+}
+.task__main {
+  display: grid;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  padding: 2px 4px;
+  text-align: start;
+  border-radius: 8px;
+}
+.task__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.task__pin {
+  width: 14px;
+  height: 14px;
+  color: var(--accent-text);
+}
+.task__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.task__meta:empty {
+  display: none;
+}
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 56px 16px;
+  text-align: center;
+}
+.empty__art {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 28px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  margin-block-end: 8px;
+}
+.empty__art svg {
+  width: 40px;
+  height: 40px;
+}
+.empty h2,
+.empty h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+.empty p {
+  color: var(--muted);
+  max-width: 36ch;
+}

@@ -27,9 +27,8 @@ if (!isWindows) chmodSync(wrapperPath, 0o755);
 const gradleTask = variant === "release" ? "bundleRelease" : "assembleDebug";
 run(isWindows ? wrapperPath : wrapper, [gradleTask], resolve(root, "android"));
 
-const artifact = variant === "release"
-  ? "android/app/build/outputs/bundle/release/app-release.aab"
-  : "android/app/build/outputs/apk/debug/app-debug.apk";
+const artifact =
+  variant === "release" ? "android/app/build/outputs/bundle/release/app-release.aab" : "android/app/build/outputs/apk/debug/app-debug.apk";
 console.log(`Android ${variant} build finished: ${artifact}`);
 if (variant === "release") {
   console.log("Release AAB is unsigned unless signing is configured in android/app/build.gradle.");

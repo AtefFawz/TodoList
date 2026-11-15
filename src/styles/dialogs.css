@@ -1,0 +1,255 @@
+.modal {
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  max-height: 100dvh;
+  overflow: hidden;
+}
+.modal::backdrop {
+  background: rgba(8, 6, 20, 0.6);
+  backdrop-filter: blur(3px);
+  animation: fade 0.2s ease;
+}
+.modal--center {
+  width: min(460px, calc(100vw - 24px));
+  max-height: min(88dvh, 760px);
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  animation: pop 0.25s var(--ease);
+}
+.modal--drawer {
+  margin-block: 0;
+  margin-inline: auto 0;
+  height: 100dvh;
+  width: min(480px, 100vw);
+  border-inline-start: 1px solid var(--line);
+  animation: slide-in 0.28s var(--ease);
+}
+[dir="rtl"] .modal--drawer {
+  margin-inline: 0 auto;
+  animation-name: slide-in-rtl;
+}
+.modal--drawer[open] {
+  display: block;
+}
+.modal--nav {
+  margin-block: 0;
+  margin-inline: 0 auto;
+  height: 100dvh;
+  width: min(320px, 88vw);
+  animation: slide-in-rtl 0.25s var(--ease);
+}
+[dir="rtl"] .modal--nav {
+  margin-inline: auto 0;
+  animation-name: slide-in;
+}
+.modal--palette {
+  width: min(620px, calc(100vw - 24px));
+  margin-block-start: 12vh;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  animation: pop 0.2s var(--ease);
+}
+.modal--palette[open] {
+  display: block;
+}
+.modal--nav > .panel {
+  height: 100%;
+}
+.panel {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+.panel--scroll {
+  max-height: min(88dvh, 760px);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.panel--nav {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: calc(16px + var(--safe-top)) 14px calc(16px + var(--safe-bottom));
+  overflow-y: auto;
+}
+.panel__x {
+  position: absolute;
+  inset-block-start: calc(14px + var(--safe-top));
+  inset-inline-end: 10px;
+}
+.panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.panel__header h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+}
+.panel__header h2 svg {
+  width: 20px;
+  height: 20px;
+  color: var(--accent-text);
+}
+.panel__footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.settings__section {
+  display: grid;
+  gap: 12px;
+  padding-block-end: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.settings__section:last-child {
+  border: 0;
+  padding: 0;
+}
+.settings__section > h3 {
+  font-size: 0.95rem;
+}
+.settings__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.seg {
+  display: inline-flex;
+  padding: 3px;
+  gap: 2px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  width: fit-content;
+}
+.seg__btn {
+  min-height: 34px;
+  padding: 0 16px;
+  border-radius: 9px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: var(--ink-2);
+}
+.seg__btn.is-active {
+  background: var(--accent-solid);
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.swatch {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.swatch.is-active {
+  border-color: var(--surface);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+.emoji-name {
+  display: flex;
+  gap: 8px;
+}
+.emoji-name__emoji {
+  width: 58px;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+/* Focus timer */
+.focus {
+  justify-items: center;
+}
+.focus .panel__header {
+  width: 100%;
+}
+.focus .field {
+  width: 100%;
+}
+.focus__dial {
+  position: relative;
+  width: 220px;
+  height: 220px;
+}
+.focus__dial svg {
+  width: 100%;
+  height: 100%;
+}
+.focus__track {
+  fill: none;
+  stroke: var(--surface-2);
+  stroke-width: 10;
+}
+.focus__arc {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.4s linear;
+}
+.focus[data-mode="break"] .focus__arc {
+  stroke: var(--success);
+}
+.focus__time {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  font-size: 2.8rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  direction: ltr;
+}
+.focus__controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+@keyframes slide-in {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes slide-in-rtl {
+  from {
+    transform: translateX(-100%);
+  }
+}
+@media (max-width: 520px) {
+  .modal--drawer {
+    width: 100vw;
+  }
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+  .focus__dial {
+    width: 190px;
+    height: 190px;
+  }
+}

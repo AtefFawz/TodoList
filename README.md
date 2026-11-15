@@ -1,367 +1,204 @@
-# نَواة | Nawa — دليل التطوير والإطلاق (v5.1.0)
+<div align="center">
 
-نَواة تطبيق إنتاجية عربي لإدارة المهام والتذكيرات وجلسات التركيز. هذا المستودع يشغّل واجهة React واحدة، ويستخدم Vite للبناء، ثم يغلّف نفس الواجهة كـ PWA للويب، أو كتطبيق Android/iOS عبر Capacitor، أو كتطبيق سطح مكتب عبر Tauri.
+<img src="public/logo192.png" width="96" alt="Nawa logo" />
 
-> **مهم:** البيانات محلية في كل تثبيت. لا توجد في هذه النسخة حسابات مستخدمين أو قاعدة بيانات سحابية أو مزامنة تلقائية بين الأجهزة. كذلك لا يوجد خادم Web Push لإرسال إشعارات الويب بعد إغلاق المتصفح.
+# نَواة · Nawa
+
+**مدير مهام عربي أولًا، يشتغل أوفلاين، وبيذكّرك في ميعادك.**
+_An Arabic-first, offline-first task manager with reliable reminders._
+
+![version](https://img.shields.io/badge/version-6.0.0-7668e8)
+![React](https://img.shields.io/badge/React-19-149eca)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
+![PWA](https://img.shields.io/badge/PWA-installable-5a0fc8)
+![i18n](https://img.shields.io/badge/lang-ar%20%7C%20en-35a6a0)
+
+[العربية](#العربية) · [English](#english)
+
+</div>
+
+<p align="center">
+  <img src="docs/screenshots/desktop-light-ar.png" width="49%" alt="Light, Arabic" />
+  <img src="docs/screenshots/desktop-dark-en.png" width="49%" alt="Dark, English" />
+</p>
 
 ---
 
-## 1. الوظائف الحالية
+## العربية
 
-- إدارة المهام: إضافة، تعديل، حذف، تكرار، إكمال وإعادة فتح.
-- تصنيفات وأولويات ومواعيد إنجاز وتذكيرات مستقلة.
-- البحث والفرز وفلاتر: الكل، اليوم، القادمة، المتأخرة، والمكتملة.
-- لوحة إحصائيات وسجل نشاط أسبوعي.
-- مؤقت تركيز مع حفظ حالته محليًا واستعادتها.
-- ثيم فاتح وداكن، واجهة عربية RTL، وتخطيط متجاوب.
-- مركز تنبيهات داخل التطبيق، وعدّاد لغير المقروء، وفتح المهمة المرتبطة بالتنبيه وتأجيل التذكير.
-- استيراد وتصدير نسخة JSON من المهام.
-- PWA قابلة للتثبيت مع Service Worker وتخزين مسبق لملفات الواجهة.
-- تكامل Native للإشعارات المحلية والاهتزاز ومشاركة الملفات على الهاتف، وإشعارات النظام ونوافذ الملفات على سطح المكتب.
+### المميزات
 
-### أبرز تغييرات 5.1.0
+- **إضافة سريعة بالكلام العادي** — اكتب «اشتري لبن بكرة 5م #بيت !عالي» والتطبيق يفهم التاريخ والوقت والأولوية والوسم.
+- **تذكيرات حقيقية** — إشعارات داخل التطبيق ومركز إشعارات، وإشعارات النظام، مع **غفوة (Snooze)**. في تطبيقات الموبايل التذكير بيتجدول على مستوى نظام التشغيل فيشتغل والتطبيق مقفول.
+- **قوائم ووسوم وتثبيت** — قوائم بألوان، وسوم، تثبيت المهام المهمة.
+- **مهام فرعية** مع شريط تقدّم، و**مهام متكررة** (يوميًا، أيام العمل، أسبوعيًا، شهريًا).
+- **سحب وإفلات** وترتيب بالكيبورد، بحث فوري، وفرز (يدوي، بالموعد، بالأولوية، بالإنشاء).
+- **عرض القادم (Upcoming)** مجمّع بالأيام، وعرض اليوم والمتأخر.
+- **تركيز (Pomodoro)** وبيتسجل الوقت على كل مهمة.
+- **إحصائيات** — سلسلة الأيام المتتالية، رسم أسبوعي، وقت التركيز.
+- **تراجع/إعادة (Undo/Redo)** و**لوحة أوامر**.
+- **عربي (RTL) وإنجليزي**، وثيم فاتح/داكن/تلقائي.
+- **مزامنة بين التابات**، نسخ احتياطي JSON كامل، وتصدير CSV.
+- **إتاحة كاملة** (لوحة المفاتيح، قارئ الشاشة، اختبارات axe).
+- **خصوصية** — كل البيانات على جهازك، بدون حساب وبدون تتبّع.
 
-- نقل أداة البناء من Create React App إلى Vite، مع الإبقاء على React وCapacitor وTauri.
-- فصل إعدادات مسارات الويب عن مسارات WebView، وإصلاح مسارات الأيقونات والخطوط لتعمل في Vercel ونسخ Native.
-- إصلاح إنشاء قنوات إشعارات Android عند تفعيل الاهتزاز أو إيقافه.
-- إزالة حقول إشعار غير مدعومة، وعدم تمرير خيارات Android الخاصة إلى iOS.
-- إضافة فحص وطلب صلاحية Alarms & reminders في Android عند دعم الإضافة.
-- إضافة اختبارات مباشرة لمسار جدولة إشعارات Android وصلاحية المنبهات الدقيقة.
-- إصلاح اختبار iOS الذي كان يعتمد على متغير وقت خارج نطاقه.
-- توحيد رقم الإصدار في ملفات الويب وTauri وCargo، وإعادة كتابة دليل التطوير والنشر.
+<p align="center">
+  <img src="docs/screenshots/notification-center.png" width="32%" alt="Notification centre" />
+  <img src="docs/screenshots/insights.png" width="32%" alt="Insights" />
+  <img src="docs/screenshots/settings.png" width="32%" alt="Settings" />
+</p>
 
-## 2. المتطلبات العامة
+### صيغة الإضافة السريعة
 
-| الأداة | المتطلب |
-|---|---|
-| Node.js | `22.12.0` أو أحدث ضمن الإصدار الرئيسي 22 |
-| npm | 10 أو أحدث |
-| Git | مستحسن لإدارة التعديلات |
+| تكتب                                                | النتيجة                   |
+| --------------------------------------------------- | ------------------------- |
+| `النهارده` / `بكرة` / `بعد بكرة`                    | اليوم / بكرة / بعد غد     |
+| `الخميس` · `الخميس الجاي`                           | أقرب خميس · الخميس القادم |
+| `بعد 3 ايام` · `بعد اسبوع`                          | تاريخ نسبي                |
+| `5م` · `5 مساء` · `17:00`                           | الوقت                     |
+| `!عالي` · `!متوسط` · `!بسيط` · `!!!`                | الأولوية                  |
+| `#بيت`                                              | وسم                       |
+| `@العمل`                                            | القائمة                   |
+| `كل يوم` · `كل اسبوع` · `كل شهر`                    | تكرار                     |
+| `tomorrow 6pm` · `next fri` · `in 3 days` · `!high` | نفس الشيء بالإنجليزي      |
 
-إصدار Node محدد في `.nvmrc`، كما أن `package.json` يتحقق من نطاق الإصدار المدعوم بواسطة Vite الحالي.
+الكلمات اللي مش مفهومة بتفضل في العنوان، فالتحليل ما بيبلعش معنى بالغلط.
 
-### تجهيز Node على Arch Linux
+### اختصارات
 
-إن كنت تستخدم `nvm`:
+| المفتاح                     | الوظيفة       |
+| --------------------------- | ------------- |
+| `N`                         | مهمة جديدة    |
+| `/`                         | بحث           |
+| `Ctrl/⌘ + K`                | لوحة الأوامر  |
+| `Ctrl/⌘ + Z` / `Ctrl/⌘ + Y` | تراجع / إعادة |
 
-```bash
-nvm install 22
-nvm use 22
-node --version
-npm --version
-```
+### التشغيل محليًا
 
-أو استخدم مدير إصدارات Node الذي تفضله، بشرط توفير Node 22.12 أو أحدث.
-
-### تثبيت الاعتماديات
-
-من جذر المشروع:
+المطلوب: **Node ≥ 22.12** (فيه `.nvmrc`) و npm ≥ 10.
 
 ```bash
 npm install
+npm run dev        # http://localhost:1420
 ```
 
-عند أول تثبيت، أضف ملف `package-lock.json` الناتج إلى Git حتى تصبح عمليات التثبيت القادمة قابلة للتكرار:
+| الأمر                                   | الوظيفة                                                  |
+| --------------------------------------- | -------------------------------------------------------- |
+| `npm run dev`                           | سيرفر التطوير                                            |
+| `npm run build`                         | بناء الويب (PWA) في `build/`                             |
+| `npm run preview`                       | معاينة البناء                                            |
+| `npm run check`                         | lint + types + format + اختبارات الوحدة + verify + build |
+| `npm test`                              | اختبارات الوحدة (Vitest)                                 |
+| `npm run e2e`                           | اختبارات المتصفح (Playwright + axe)                      |
+| `npm run build:native`                  | بناء نسخة الموبايل/الديسكتوب                             |
+| `npm run mobile:android` / `mobile:ios` | فتح مشروع الموبايل                                       |
+| `npm run mobile:android:debug`          | APK للتجربة                                              |
+| `npm run desktop:dev` / `desktop:build` | تطبيق سطح المكتب (Tauri)                                 |
+| `npm run verify:native`                 | فحص إعدادات المنصات                                      |
+
+لو عندك Chromium جاهز: `PW_CHROMIUM_PATH=/path/to/chrome npm run e2e`.
+
+### النشر
+
+**Vercel:** استورد الريبو، والإعدادات جاهزة في `vercel.json` (Build: `npm run build:web`، Output: `build`).
+
+**GitHub Pages / أي مسار فرعي:** ابنِ بمسار الريبو:
 
 ```bash
-git add package-lock.json
+BASE_PATH=/اسم-الريبو/ npm run build:web
 ```
 
-لا تستخدم `npm audit fix --force` بصورة عمياء؛ قد يفرض تحديثات رئيسية غير متوافقة. افحص التفاصيل أولًا:
+ثم ارفع محتوى `build/`. التطبيق بيستخدم hash routing فمفيش إعداد rewrite مطلوب.
 
-```bash
-npm audit
-```
+**التثبيت كتطبيق (PWA):** افتح الموقع في Chrome/Edge/Safari واختر «تثبيت» / «إضافة للشاشة الرئيسية». لما يظهر إصدار جديد بيظهر شريط «تحديث».
 
-إذا ظهر تحذير حول install scripts، راجع اسم الحزمة والسكربت قبل الموافقة عليه. لا توافق على سكربت لمجرد إسكات التحذير.
+### تطبيقات الموبايل والديسكتوب
 
----
+تفاصيل كاملة في [`docs/NATIVE.md`](docs/NATIVE.md): أندرويد (Capacitor، JDK 21)، iOS (Mac + Xcode)، وسطح المكتب (Tauri 2: Windows / macOS / Linux AppImage).
 
-## 3. التطوير المحلي واختبارات الجودة
+> ⚠️ مسارات الموبايل والديسكتوب مفحوصة ثابتًا ووحدات الاختبار تغطي منطق الإشعارات، لكن البناء الفعلي والتجربة على الجهاز لازم تتم عندك.
 
-### تشغيل خادم التطوير
+### حدود التذكيرات (بصراحة)
 
-```bash
-npm run dev
-```
+- **على الويب:** التذكير بيشتغل طول ما التطبيق مفتوح أو مثبّت وشغّال. مفيش Web Push backend، فمتتوقعش إشعار والمتصفح مقفول.
+- **على الموبايل (Capacitor):** التذكير بيتجدول مع نظام التشغيل (أقرب 60 تذكير، حد iOS 64) ويشتغل والتطبيق مقفول.
+- البيانات محلية بالكامل ومفيش مزامنة بين الأجهزة — استخدم النسخ الاحتياطي للنقل.
 
-يفتح Vite على:
+### البيانات والنسخ الاحتياطي
+
+- التخزين: `localStorage` (مفتاح `nawa:v3`)، مع تحقق Zod عند كل قراءة.
+- **الإعدادات ← تصدير** ينزّل نسخة JSON كاملة (مهام، قوائم، إحصائيات، إعدادات). **استيراد** بيتحقق من الملف ويحافظ على لغتك وثيمك الحاليين.
+- التصدير CSV متاح للمهام.
+- **الترقية من Nawa 5.x:** أول تشغيل بيحوّل بياناتك القديمة تلقائيًا (التصنيفات ← قوائم، الأولويات، التذكيرات)، ونسخ 5.x الاحتياطية لسه تتستورد.
+- مفيش حسابات ولا تتبّع ولا طلبات شبكة غير تحميل التطبيق نفسه.
+
+### هيكل المشروع
 
 ```text
-http://localhost:1420
+src/
+  core/        منطق نقي: actions, selectors, quick-add, reminders, stats, dates, transfer, legacy
+  state/       store مع undo/redo + تحقق + مزامنة تابات + alerts
+  platform/    محوّل الويب/Capacitor/Tauri والتذكيرات الأصلية
+  hooks/       تكاملات المتصفح: reminders, hotkeys, PWA, focus
+  features/    الشاشات: tasks, alerts, settings, stats, focus, palette, shell
+  components/  عناصر عامة
+  i18n/        ar / en
+  styles/      tokens + CSS بخصائص منطقية (RTL)
+tests/e2e/     Playwright
+src-tauri/     مشروع Tauri
+native/        أصول أندرويد (أيقونات، قنوات)
+docs/          المعمارية، ADRs، المراجعة، الموبايل
 ```
 
-ويمكن استخدام الأمر المختصر التالي أيضًا:
+### توثيق
 
-```bash
-npm start
-```
-
-### فحوصات المشروع
-
-```bash
-npm run verify:native
-npm run test:ci
-npm run build:web
-npm run build:native
-```
-
-- `verify:native`: يتحقق من وجود ملفات المنصات وإعدادات Capacitor/Tauri وتطابق المعرّفات والإصدارات.
-- `test:ci`: يشغّل اختبارات Vitest مرة واحدة دون وضع المراقبة.
-- `build:web`: يبني نسخة الويب بمسارات مناسبة للنشر على الدومين.
-- `build:native`: يبني نفس الواجهة بمسارات نسبية لتضمينها داخل WebView في الهاتف أو سطح المكتب.
-
-لم يرفق المشروع ملف lock موحّدًا عند تسليم هذه النسخة. لذلك يجب تشغيل `npm install` في بيئة التطوير، ثم حفظ `package-lock.json` الناتج في Git. لا تعتبر اجتياز فحص الإعدادات وحده بديلًا عن تشغيل الاختبارات والبناء على جهازك.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — الطبقات وتدفق التذكيرات
+- [`docs/REVIEW.md`](docs/REVIEW.md) — مراجعة 5.1 وما تغيّر في 6.0
+- [`docs/NATIVE.md`](docs/NATIVE.md) — بناء أندرويد/iOS/ديسكتوب
+- [`docs/adr/`](docs/adr) — قرارات معمارية
 
 ---
 
-## 4. نشر نسخة الويب على Vercel
+## English
 
-المشروع يستخدم Vite الآن، وليس Create React App.
+**Nawa** is a local-first task manager: natural-language quick add, subtasks, repeats, lists and tags, drag & drop, focus timer, insights, undo/redo, a command palette, Arabic (RTL) and English, and reminders that fire in-app, through the OS, and — in the Android/iOS builds — while the app is closed. Your data never leaves the device.
 
-إعدادات المشروع في Vercel:
-
-| الإعداد | القيمة |
-|---|---|
-| Framework Preset | Vite |
-| Install Command | `npm install` |
-| Build Command | `npm run build:web` |
-| Output Directory | `build` |
-| Node.js Version | `22.x` |
-
-ملف `vercel.json` يحتوي على أمر البناء ومجلد الإخراج وترويسات إعادة التحقق لملف Service Worker وملف Manifest.
-
-قبل النشر، اختبر البناء محليًا:
+### Quick start
 
 ```bash
-npm run build:web
-npm run preview
+nvm use            # Node ≥ 22.12 (.nvmrc)
+npm install
+npm run dev        # http://localhost:1420
+npm run check      # lint, types, format, 184 unit tests, native config check, build
+npm run e2e        # Playwright + axe against the production build
 ```
 
-افتح عنوان المعاينة الذي يطبعه Vite وتأكد من تحميل CSS والخطوط والصور. بعد ذلك ارفع المشروع إلى GitHub واربط المستودع بـ Vercel.
-
-### تثبيت PWA للمستخدمين
-
-- **Android:** يفتح المستخدم رابط الموقع في متصفح يدعم تثبيت PWA، ثم يختار Install app أو Add to Home Screen بحسب المتصفح.
-- **iPhone/iPad:** يفتح الموقع في Safari، ثم Share → Add to Home Screen.
-- يجب نشر نسخة الإنتاج عبر HTTPS حتى يعمل Service Worker والتثبيت بصورة صحيحة.
-
-### حدود إشعارات الويب
-
-نسخة الويب تستخدم Notification API ومؤقتات الصفحة لفحص المواعيد. قد يقيّد المتصفح هذه المؤقتات عندما تنتقل الصفحة للخلفية، ولا يمكن اعتبار التنبيهات مضمونة بعد إغلاق المتصفح أو التطبيق بالكامل. يحتوي Service Worker على معالج لحدث Push، لكن هذا المستودع لا ينشئ اشتراكات Push ولا يتضمن خادمًا يرسل الرسائل؛ لذلك لا توجد خدمة Web Push مكتملة في هذه النسخة.
-
-### حدود بيانات PWA
-
-تُخزن المهام في Local Storage على نفس المتصفح/الأصل. تثبيت PWA على هاتف آخر لا ينقل بيانات الهاتف الأول. استخدم تصدير JSON ثم استيراده يدويًا لنقل المهام.
-
----
-
-## 5. تطبيق Android مستقل
-
-### المتطلبات
-
-- Android Studio وAndroid SDK.
-- JDK 21 متوافق مع إعدادات Android Gradle Plugin المستخدمة.
-- إعداد متغيرات Android SDK في البيئة أو داخل Android Studio.
-
-### إضافة مشروع Android لأول مرة
-
-نفّذ الأمر مرة واحدة من جذر المشروع:
-
-```bash
-npm run mobile:add:android
-```
-
-ينشئ Capacitor مجلد `android/`، ثم ينسخ إعدادات أيقونة نَواة وأيقونة الإشعار وصلاحيات الإشعارات والمنبهات.
-
-### مزامنة تغييرات الواجهة مع Android
-
-```bash
-npm run mobile:sync
-```
-
-### تشغيل التطبيق من Android Studio
-
-```bash
-npm run mobile:android
-```
-
-### إنشاء APK للتجربة
-
-```bash
-npm run mobile:android:debug
-```
-
-المخرج:
+### Quick-add examples
 
 ```text
-android/app/build/outputs/apk/debug/app-debug.apk
+Call mom tomorrow 6pm !high #family @Personal every week
+Submit report next fri 17:00 !!!
+اشتري لبن بكرة 5م #بيت
 ```
 
-### إنشاء Android App Bundle
+Shortcuts: `N` new task · `/` search · `Ctrl/⌘+K` command palette · `Ctrl/⌘+Z` / `Y` undo / redo.
 
-```bash
-npm run mobile:android:release
-```
+### Deploy
 
-المخرج:
+- **Vercel** — import the repo; `vercel.json` is ready.
+- **GitHub Pages / sub-path** — `BASE_PATH=/<repo>/ npm run build:web`, publish `build/`. Hash routing means no rewrites are needed.
+- **Native** — see [`docs/NATIVE.md`](docs/NATIVE.md).
 
-```text
-android/app/build/outputs/bundle/release/app-release.aab
-```
+### Honest limitations
 
-يجب إعداد توقيع Release ومفاتيح النشر بشكل آمن قبل إرسال AAB إلى Google Play. لا تضع keystore أو كلمات مروره في Git.
+- Web reminders run only while the app is open or installed and alive (no Web Push backend).
+- Android/iOS/Tauri builds are ported and statically verified but must be built and tested on a device/toolchain.
+- No sync between devices; use the JSON backup.
 
-### تذكيرات Android
+### Tech
 
-- يطلب التطبيق إذن `POST_NOTIFICATIONS` على إصدارات Android التي تتطلب موافقة المستخدم.
-- يستخدم التطبيق Local Notifications لجدولة التذكيرات على نظام التشغيل بدل الاعتماد على مؤقت JavaScript داخل الصفحة.
-- قد يحتاج Android إلى إذن Alarms & reminders للسماح بمواعيد دقيقة. يوضح قسم الإعدادات حالة صلاحية التنبيهات الدقيقة ويوفر فتح صفحة إعداداتها عند دعم إصدار الإضافة ذلك.
-- إذا لم يمنح المستخدم إذن التنبيهات أو المنبهات الدقيقة، أو فرض النظام قيودًا على الطاقة، فقد لا يصل التذكير في الثانية المحددة. لا تعد المستخدم بتسليم مضمون في كل ظروف النظام.
-- جدولة التذكيرات يعاد تحديثها عند تعديل المهام أو إكمالها أو حذفها، وعند عودة التطبيق إلى الواجهة.
+Vite 7 · React 19 + React Compiler · strict TypeScript · Zod 4 · dnd-kit · lucide-react · vite-plugin-pwa · Capacitor 8 · Tauri 2 · Vitest · Playwright + axe.
 
----
+### Contributing
 
-## 6. تطبيق iOS مستقل
-
-يتطلب بناء iOS جهاز macOS مع Xcode؛ لا يمكن إنشاء تطبيق iOS نهائي من Arch Linux أو Windows وحدهما.
-
-على جهاز Mac، أضف المنصة أول مرة:
-
-```bash
-npm run mobile:add:ios
-npm run mobile:ios
-```
-
-يفتح الأمر مشروع Xcode. اضبط Team وBundle Signing وملف التوقيع ثم ابنِ ووزّع التطبيق من Xcode.
-
-يحتفظ التطبيق بأقرب 60 تذكيرًا قادمًا في قائمة إشعارات iOS ويعيد مزامنتها عند فتح التطبيق أو عودته إلى الواجهة. قد تتأثر الإشعارات بإعدادات المستخدم والنظام.
-
----
-
-## 7. تطبيق سطح المكتب عبر Tauri
-
-### Arch Linux
-
-تثبيت متطلبات النظام الخاصة ببناء Tauri:
-
-```bash
-sudo pacman -Syu
-sudo pacman -S --needed \
-  webkit2gtk-4.1 \
-  base-devel \
-  curl \
-  wget \
-  file \
-  openssl \
-  appmenu-gtk-module \
-  libappindicator-gtk3 \
-  librsvg \
-  xdotool \
-  rustup
-```
-
-جهّز Rust stable:
-
-```bash
-rustup default stable
-rustc --version
-cargo --version
-```
-
-يشترط المشروع Rust 1.90 أو أحدث بسبب إصدار Tauri الحالي.
-
-### تشغيل نسخة سطح المكتب أثناء التطوير
-
-```bash
-npm run desktop:dev
-```
-
-### بناء AppImage على Linux
-
-```bash
-npm run desktop:build:appimage
-```
-
-المخرجات تكون داخل:
-
-```text
-src-tauri/target/release/bundle/appimage/
-```
-
-يمكن بناء حزم Tauri المتاحة للنظام الحالي باستخدام:
-
-```bash
-npm run desktop:build
-```
-
-إشعارات نسخة سطح المكتب في هذا الإصدار تُرسل ما دام برنامج نَواة يعمل. لا توجد خدمة خلفية أو جدولة Rust مستقلة تضمن تذكيرًا بعد إغلاق البرنامج بالكامل.
-
-### Windows وmacOS
-
-ابنِ التطبيق على نظام التشغيل المستهدف مع متطلبات Tauri الخاصة به. بناء macOS يتطلب Xcode، وبناء Windows يتطلب أدوات MSVC وWebView2. لا تعتمد على ملف Linux الناتج كبديل لحزم الأنظمة الأخرى.
-
----
-
-## 8. البيانات والنسخ الاحتياطي والخصوصية
-
-- المهام، الثيم، إعدادات الإشعارات، سجل التنبيهات ومؤقت التركيز محفوظة محليًا على الجهاز.
-- لا يوجد خادم مركزي ولا تسجيل دخول ولا مزامنة تلقائية بين الأجهزة.
-- نسخة JSON الحالية تحفظ قائمة المهام فقط؛ لا تتضمن إعدادات التطبيق أو سجل التنبيهات أو حالة مؤقت التركيز.
-- الاستيراد يستبدل قائمة المهام الحالية بعد تأكيد المستخدم. صدّر نسخة من بياناتك قبل الاستيراد عند الحاجة.
-- حذف التطبيق أو مسح بياناته قد يؤدي إلى فقدان البيانات المحلية. احتفظ بنسخ احتياطية منتظمة.
-
----
-
-## 9. هيكل المشروع
-
-```text
-.
-├── index.html                 # Vite HTML entry
-├── public/                    # PWA manifest, icons, fonts, service worker
-├── src/
-│   ├── components/            # React UI components
-│   ├── data/                  # Default categories and app constants
-│   ├── hooks/                 # Task, notification and PWA state
-│   ├── platform/              # Capacitor / Tauri runtime adapters
-│   ├── utils/                 # Task, reminder and validation logic
-│   ├── assets/fonts/          # Font files processed by Vite
-│   ├── App.js
-│   ├── index.js
-│   └── serviceWorkerRegistration.js
-├── native/android/            # Android launcher and notification assets
-├── scripts/                   # Native setup, build and verification
-├── src-tauri/                 # Tauri desktop shell and Rust source
-├── capacitor.config.json
-├── vite.config.mjs
-├── vercel.json
-└── package.json
-```
-
-### إرشادات عند تعديل المشروع
-
-1. ضع منطق المهام والتحقق من البيانات في `src/utils/` واكتب له اختبارات.
-2. ضع تكاملات النظام في `src/platform/nativeRuntime.js`، ولا تستدعِ Capacitor/Tauri APIs مباشرة من المكونات إلا عند الضرورة.
-3. عند إضافة صلاحية أو plugin جديد، حدّث إعداد Capacitor أو Tauri وملف `scripts/verify-native-setup.mjs` والتوثيق.
-4. عند تغيير ملفات PWA الثابتة أو استراتيجية التخزين المؤقت، ارفع رقم `CACHE_NAME` في `public/service-worker.js` لإبطال الكاش القديم.
-5. حافظ على تطابق الإصدار بين `package.json` و`src-tauri/tauri.conf.json` و`src-tauri/Cargo.toml`.
-6. اختبر نسخة الويب ونسخة Native؛ نجاح بناء Vite وحده لا يثبت أن صلاحيات Android أو Xcode أو Rust تعمل.
-
----
-
-## 10. أوامر سريعة
-
-| المهمة | الأمر |
-|---|---|
-| تشغيل الويب محليًا | `npm run dev` |
-| فحص إعدادات المشروع | `npm run verify:native` |
-| تشغيل الاختبارات | `npm run test:ci` |
-| بناء الويب | `npm run build:web` |
-| بناء ملفات Native المشتركة | `npm run build:native` |
-| إضافة Android أول مرة | `npm run mobile:add:android` |
-| مزامنة Android/iOS | `npm run mobile:sync` |
-| APK تجريبي | `npm run mobile:android:debug` |
-| Android AAB | `npm run mobile:android:release` |
-| تشغيل Desktop | `npm run desktop:dev` |
-| بناء AppImage | `npm run desktop:build:appimage` |
-
+Run `npm run check` and `npm run e2e` before opening a PR. Business logic goes in `src/core` as pure functions with tests; platform-specific code goes only in `src/platform`.

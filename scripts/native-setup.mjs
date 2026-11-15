@@ -41,10 +41,7 @@ if (platform === "android") {
   copyFileSync(resolve(root, "native/android/ic_stat_nawa.png"), resolve(drawable, "ic_stat_nawa.png"));
 
   let manifest = readFileSync(manifestPath, "utf8");
-  const permissions = [
-    "android.permission.POST_NOTIFICATIONS",
-    "android.permission.SCHEDULE_EXACT_ALARM",
-  ];
+  const permissions = ["android.permission.POST_NOTIFICATIONS", "android.permission.SCHEDULE_EXACT_ALARM"];
   for (const permission of permissions) {
     if (!manifest.includes(`android:name="${permission}"`)) {
       manifest = manifest.replace(/(<manifest[^>]*>)/, `$1\n    <uses-permission android:name="${permission}" />`);
@@ -55,7 +52,8 @@ if (platform === "android") {
     let appTag = applicationTag[0];
     if (/android:icon="[^"]*"/.test(appTag)) appTag = appTag.replace(/android:icon="[^"]*"/, 'android:icon="@mipmap/ic_launcher"');
     else appTag = appTag.replace(/>$/, ' android:icon="@mipmap/ic_launcher">');
-    if (/android:roundIcon="[^"]*"/.test(appTag)) appTag = appTag.replace(/android:roundIcon="[^"]*"/, 'android:roundIcon="@mipmap/ic_launcher_round"');
+    if (/android:roundIcon="[^"]*"/.test(appTag))
+      appTag = appTag.replace(/android:roundIcon="[^"]*"/, 'android:roundIcon="@mipmap/ic_launcher_round"');
     else appTag = appTag.replace(/>$/, ' android:roundIcon="@mipmap/ic_launcher_round">');
     manifest = manifest.replace(applicationTag[0], appTag);
   }
